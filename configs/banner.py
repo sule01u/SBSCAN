@@ -17,7 +17,7 @@ def banner():
  \__,_|_| |_|_|\_\_| |_|\___/ \_/\_/ |_| |_|     |___/\___|\___|
  
  author: sule01u
- from: https://github.com/suleowang
+ from: https://github.com/sule01u/SBSCAN
  desc: springboot信息泄漏扫描 & spring漏洞扫描
 
 '''

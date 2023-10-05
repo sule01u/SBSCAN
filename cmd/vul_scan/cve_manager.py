@@ -9,7 +9,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from . import cve_2022_22963
 from termcolor import cprint
-from cmd.reporter import save_cve_report
+from utils.reporter import save_cve_report
 
 # CVE模块列表
 CVE_MODULES = [

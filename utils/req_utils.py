@@ -9,8 +9,8 @@
 import sys
 import requests
 from termcolor import cprint
-from cmd.custom_headers import DEFAULT_HEADER
-from cmd.utils.proxy_utils import get_with_proxy
+from configs.custom_headers import DEFAULT_HEADER
+from utils.proxy_utils import get_with_proxy
 
 
 def fetch_target_content(target, proxies):

@@ -8,12 +8,14 @@
 """
 
 import requests
-from cmd.custom_headers import DEFAULT_HEADER, TIMEOUT
+from configs.custom_headers import DEFAULT_HEADER, TIMEOUT
+from utils.format_utils import format_url
 
 
 def get_with_proxy(url, proxy):
     proxies = {
-        'http': proxy,
-        'https': proxy
+        "http": format_url(proxy, "http"),
+        "https": format_url(proxy, "https")
     }
+    print(proxies)
     return requests.get(url, proxies=proxies, headers=DEFAULT_HEADER, verify=False, timeout=TIMEOUT)

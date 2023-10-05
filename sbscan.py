@@ -7,7 +7,7 @@
    date：          2023/10/4
 """
 import click
-from cmd.banner import banner
+from configs.banner import banner
 from cmd.leak_scan import scan
 from cmd.vul_scan.cve_manager import run_cve_checks
 from cmd.proxy_check import is_proxy_working
@@ -18,7 +18,6 @@ from cmd.proxy_check import is_proxy_working
 @click.option("-u", "--url", type=str, help="对单个URL进行扫描")
 @click.option("-f", "--file", type=str, help="读取文件中的url进行扫描")
 @click.option("-p", "--proxy", type=str, help="使用HTTP代理")
-# @click.option('--output', type=click.Path(), default='.', help='Directory to save the results.')
 @click.option('--threads', type=int, default=5, help='指定线程数量')
 def main(ctx, url, file, proxy, threads):
     urls = []

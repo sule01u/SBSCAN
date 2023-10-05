@@ -3,12 +3,14 @@
 
 ## 🏂 Run
 ```Bash
+$ git clone https://github.com/sule01u/SBSCAN.git
+$ cd SBSCAN
 $ php3 install -r requirements.txt
 $ python3 sbscan.py --help
 ```
 >  ![sbsscan](https://p.ipic.vip/t752lu.png)
 
-
+fir 
 
 ## 🎡 Options
 ```Bash

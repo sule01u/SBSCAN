@@ -9,10 +9,10 @@
 from termcolor import cprint
 import requests
 from concurrent.futures import ThreadPoolExecutor
-from cmd.rule import LEAK_RULES
-from cmd.utils.format_utils import format_url
-from cmd.utils.req_utils import fetch_target_content
-from cmd.reporter import save_leak_report
+from configs.rule import LEAK_RULES
+from utils.format_utils import format_url
+from utils.req_utils import fetch_target_content
+from utils.reporter import save_leak_report
 
 requests.packages.urllib3.disable_warnings()
 
@@ -22,7 +22,7 @@ def single_scan(url, proxy):
     vulnerable_paths = []
 
     for path, keyword in LEAK_RULES.items():
-        url = format_url(url)
+        url = format_url(url, "http")
         target = url + path.strip()
         response = fetch_target_content(target, proxy)
         if response and response.status_code == 200:
@@ -47,6 +47,8 @@ def perform_scan(urls, proxy, threads):
                 results = future.result()
                 if results:
                     save_leak_report(url, results)  # 保存结果到指定的输出文件
+                else:
+                    cprint(f"[-] 未检测到有站点存在敏感路径开放", "red")
             except Exception as e:
                 cprint(f"[-] 扫描 {url} 失败，原因: {e}", "red")
 

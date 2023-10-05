@@ -8,8 +8,12 @@
 """
 
 
-def format_url(url):
+def format_url(url, protocol):
     """构造完整的URL"""
     if '://' not in url:
-        url = f"http://{url}"
+        if protocol == "http":
+            url = f"http://{url}"
+        elif protocol == "https":
+            url = f"https://{url}"
     return f"{url.rstrip('/')}/"
+

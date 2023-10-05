@@ -6,14 +6,12 @@
    Author :       sule01u
    date：          2023/10/5
 """
-# cve_2022_22963.py
-
 import requests
 import random
-from cmd.custom_headers import USER_AGENTS
+from configs.custom_headers import USER_AGENTS
 
 
-def check(target_url, proxies=None):
+def gitcheck(target_url, proxies=None):
     """
     对给定的目标URL检测CVE-2022-22963漏洞。
 
