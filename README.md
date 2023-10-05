@@ -1,5 +1,7 @@
 # ✈️ 一、工具概述
-扫描Spring Boot的敏感信息泄露路径是否开放并对站点测试Spring相关的漏洞。
+## SBSCAN：
+- 用于检测站点是否存在Spring Boot的敏感信息泄漏
+- 用于检测站点是否存在Spring相关的漏洞
 
 ## 🏂 Run
 ```Bash
