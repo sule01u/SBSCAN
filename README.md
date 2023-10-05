@@ -15,7 +15,6 @@ $ python3 sbscan.py --help
       -u, --url TEXT     对单个URL进行扫描
       -f, --file TEXT    读取文件中的url目标进行扫描
       -p, --proxy TEXT   指定HTTP代理
-      --output PATH      保存结果的目录路径
       --threads INTEGER  指定线程数量
       --help             显示帮助信息
 
@@ -25,8 +24,7 @@ $ python3 sbscan.py --help
 ```Bash
 $ python3 sbscan.py -u http://test.com
 $ python3 sbscan.py -f url.txt
-$ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888
-$ python3 sbscan.py -u http://test.com --output /data
+$ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
 ```
 
 ## ⛪ Discussion
