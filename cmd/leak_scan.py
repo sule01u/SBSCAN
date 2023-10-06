@@ -59,6 +59,6 @@ def scan(urls, proxy, threads=10):
         cprint("[-]没有提供URL进行扫描", "red")
         return
 
-    cprint(f"[+]开始扫描 {len(urls)} 个URLs，使用 {threads} 个线程", "yellow")
+    cprint(f"[+]正在检测 {len(urls)} 个URLs的所有敏感路径，使用 {threads} 个线程，请稍后", "yellow")
     perform_scan(urls, proxy, threads)
     cprint("[+]信息泄漏扫描完成================================\n", "yellow")
