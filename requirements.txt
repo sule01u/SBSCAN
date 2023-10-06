@@ -4,4 +4,4 @@ click==7.1.2
 idna==2.10
 requests==2.31.0
 termcolor==2.3.0
-urllib3==2.0.6
+urllib3==1.26.4
