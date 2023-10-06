@@ -37,6 +37,7 @@ $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
 <p>
     <img alt="QR-code" src="https://github.com/sule01u/BigTree975.github.io/blob/master/img/mine.png" width="20%" height="20%" style="max-width:100%;">
 </p>
+
 ## 📑 Licenses
 
 在原有协议[LICENSE]([LICENSE](https://github.com/sule01u/SBSCAN/blob/master/LICENSE))中追加以下免责声明。若与原有协议冲突均以免责声明为准。
