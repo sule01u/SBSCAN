@@ -32,7 +32,7 @@ $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
 ```
 
 ## ⛪ Discussion
-* Dismap Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
+* Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
 * WeChat: 扫码关注不懂安全
 <p>
     <img alt="QR-code" src="https://github.com/sule01u/BigTree975.github.io/blob/master/img/mine.png" width="20%" height="20%" style="max-width:100%;">
