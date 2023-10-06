@@ -11,7 +11,7 @@ import random
 from configs.custom_headers import USER_AGENTS
 
 
-def gitcheck(target_url, proxies=None):
+def check(target_url, proxies=None):
     """
     对给定的目标URL检测CVE-2022-22963漏洞。
 
