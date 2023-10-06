@@ -40,7 +40,7 @@ $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
 
 ## 📑 Licenses
 
-在原有协议[LICENSE]([LICENSE](https://github.com/sule01u/SBSCAN/blob/master/LICENSE))中追加以下免责声明。若与原有协议冲突均以免责声明为准。
+在原有协议[LICENSE](https://github.com/sule01u/SBSCAN/blob/master/LICENSE)中追加以下免责声明。若与原有协议冲突均以免责声明为准。
 
 本工具禁止进行未授权测试，禁止二次开发后进行未授权测试。
 
