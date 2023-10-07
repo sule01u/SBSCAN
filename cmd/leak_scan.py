@@ -36,8 +36,8 @@ def single_scan(url, proxy):
                        attrs=["bold", "reverse"])
                 vulnerable_paths.append(target)
             else:
-                pass
-                # cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
+                # pass
+                cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
         except Exception as e:
             cprint(f"[-] {e} 无法访问 URL为:{target}", "yellow")
 
