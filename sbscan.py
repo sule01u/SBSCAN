@@ -19,7 +19,8 @@ from cmd.proxy_check import is_proxy_working
 @click.option("-f", "--file", type=str, help="读取文件中的url进行扫描")
 @click.option("-p", "--proxy", type=str, help="使用HTTP代理")
 @click.option('--threads', type=int, default=5, help='指定线程数量')
-def main(ctx, url, file, proxy, threads):
+@click.option('--quiet', is_flag=True, help='启用纯净输出，只输出命中的敏感路径信息')
+def main(ctx, url, file, proxy, threads, quiet):
     urls = []
     if proxy and not is_proxy_working(proxy):
         print(f"Proxy {proxy} is not working!")
@@ -36,7 +37,7 @@ def main(ctx, url, file, proxy, threads):
         with open(file, 'r') as f:
             urls = [line.strip() for line in f]
     # leak_scan
-    scan(urls, proxy, threads)
+    scan(urls, proxy, quiet, threads)
 
     # vul_scan
     run_cve_checks(urls, proxy, threads)

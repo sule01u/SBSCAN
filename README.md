@@ -10,7 +10,9 @@ $ cd SBSCAN
 $ pip3 install -r requirements.txt
 $ python3 sbscan.py --help
 ```
->  ![image-20231007161803131](../../Library/Application Support/typora-user-images/image-20231007161803131.png)
+> 使用效果图
+
+>  ![image-20231007165304739](https://p.ipic.vip/fy2zas.png)
 
 
 ## 🎡 Options
@@ -19,6 +21,7 @@ $ python3 sbscan.py --help
       -f, --file TEXT    读取文件中的url目标进行扫描
       -p, --proxy TEXT   指定HTTP代理
       --threads INTEGER  指定线程数量
+      --quiet            启用纯净输出，只输出命中的敏感路径信息
       --help             显示帮助信息
 
 ```
@@ -28,6 +31,7 @@ $ python3 sbscan.py --help
 $ python3 sbscan.py -u http://test.com
 $ python3 sbscan.py -f url.txt
 $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
+$ python3 sbscan.py -u http://test.com --quit
 ```
 
 ## ⛪ Discussion

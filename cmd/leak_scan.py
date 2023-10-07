@@ -17,7 +17,7 @@ from utils.reporter import save_leak_report
 requests.packages.urllib3.disable_warnings()
 
 
-def single_scan(url, proxy):
+def single_scan(url, proxy, quiet):
     """扫描单个URL查找脆弱路径"""
     vulnerable_paths = []
 
@@ -36,18 +36,20 @@ def single_scan(url, proxy):
                        attrs=["bold", "reverse"])
                 vulnerable_paths.append(target)
             else:
-                # pass
-                cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
+                if quiet:
+                    pass
+                else:
+                    cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
         except Exception as e:
             cprint(f"[-] {e} 无法访问 URL为:{target}", "yellow")
 
     return vulnerable_paths
 
 
-def perform_scan(urls, proxy, threads):
+def perform_scan(urls, proxy, quiet, threads):
     """并发扫描多个URL"""
     with ThreadPoolExecutor(max_workers=threads) as executor:
-        futures = {executor.submit(single_scan, url, proxy): url for url in urls}
+        futures = {executor.submit(single_scan, url, proxy, quiet): url for url in urls}
 
         for future in futures:
             url = futures[future]
@@ -61,12 +63,12 @@ def perform_scan(urls, proxy, threads):
                 cprint(f"[-] 扫描 {url} 失败，原因: {e}", "red")
 
 
-def scan(urls, proxy, threads=10):
+def scan(urls, proxy, quiet, threads=10):
     """主要的扫描函数，处理提供的URLs"""
     if not urls:
         cprint("[-]没有提供URL进行扫描", "red")
         return
 
     cprint(f"[+]正在检测 {len(urls)} 个URLs的所有敏感路径，使用 {threads} 个线程，请稍后", "yellow")
-    perform_scan(urls, proxy, threads)
+    perform_scan(urls, proxy, quiet, threads)
     cprint("[+]信息泄漏扫描完成================================\n", "yellow")
