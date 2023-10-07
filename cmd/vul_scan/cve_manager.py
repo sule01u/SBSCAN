@@ -7,22 +7,24 @@
    date：          2023/10/5
 """
 from concurrent.futures import ThreadPoolExecutor
-from . import cve_2022_22963, cve_2022_22947
+from . import cve_2022_22963, cve_2022_22947, cve_2022_22965, cve_2018_1273
 from termcolor import cprint
 from utils.reporter import save_cve_report
 
 # CVE模块列表
 CVE_MODULES = [
     cve_2022_22963,
-    cve_2022_22947
+    cve_2022_22947,
+    cve_2022_22965,
+    cve_2018_1273
 ]
 
 
 def run_single_url_cve_checks(url, proxies=None):
     results = []
     for module in CVE_MODULES:
-        status, result = module.check(url, proxies)
-        if status:
+        is_vulnerable, result = module.check(url, proxies)
+        if is_vulnerable:
             cprint(f"[+] 检测到漏洞: {result}", "red")
             save_cve_report(result['CVE_ID'], result['URL'], result['Details'])  # 保存每个CVE的报告
             results.append(result)

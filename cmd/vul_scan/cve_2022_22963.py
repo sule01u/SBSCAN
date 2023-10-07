@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
    File Name：     cve_2022_22963.py
-   Description :
+   Description :  Check for CVE_2022_22963 vulnerability
    Author :       sule01u
    date：          2023/10/5
 """
@@ -10,6 +10,7 @@ import requests
 import random
 from configs.custom_headers import USER_AGENTS
 from utils.format_utils import format_url
+requests.packages.urllib3.disable_warnings()
 
 
 def check(target_url, proxies=None):
@@ -59,3 +60,9 @@ def check(target_url, proxies=None):
             "URL": target_url,
             "Details": f"请求发生错误: {e}"
         }
+
+
+if __name__ == "__main__":
+    target = "http://localhost:8080/"
+    is_vulnerable, result = check(format_url(target, "http"))
+    print(result)

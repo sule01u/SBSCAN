@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 """
    File Name：     cve_2022_22947.py
-   Description :   检测CVE-2022-22947漏洞
+   Description :   Check for CVE_2022_22947 vulnerability
    Author :       sule01u
    date：          2023/10/7
 """
 import random
 import requests
-from urllib import parse as urlparse
 from configs.custom_headers import USER_AGENTS
 from utils.format_utils import format_url
+requests.packages.urllib3.disable_warnings()
 
 
 def send_request(url, method, headers=None, data=None, proxies=None):
@@ -94,3 +94,9 @@ def check(target_url, proxies=None):
             "URL": target_url,
             "Details": f"请求发生错误: {e}"
         }
+
+
+if __name__ == "__main__":
+    target = "http://lumi.wang/"
+    is_vulnerable, result = check(format_url(target, "http"))
+    print(result)
