@@ -31,7 +31,7 @@ $ python3 sbscan.py --help
 $ python3 sbscan.py -u http://test.com
 $ python3 sbscan.py -f url.txt
 $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
-$ python3 sbscan.py -u http://test.com --quit
+$ python3 sbscan.py -u http://test.com --quiet
 ```
 
 ## ⛪ Discussion
