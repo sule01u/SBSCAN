@@ -10,7 +10,7 @@ $ cd SBSCAN
 $ pip3 install -r requirements.txt
 $ python3 sbscan.py --help
 ```
->  ![sbsscan](https://p.ipic.vip/t752lu.png)
+>  ![image-20231007161803131](../../Library/Application Support/typora-user-images/image-20231007161803131.png)
 
 
 ## 🎡 Options
