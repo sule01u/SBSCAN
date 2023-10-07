@@ -7,7 +7,7 @@
    date：          2023/10/5
 """
 from concurrent.futures import ThreadPoolExecutor
-from . import cve_2022_22963, cve_2022_22947, cve_2022_22965, cve_2018_1273
+from . import cve_2022_22963, cve_2022_22947, cve_2022_22965
 from termcolor import cprint
 from utils.reporter import save_cve_report
 
@@ -15,8 +15,7 @@ from utils.reporter import save_cve_report
 CVE_MODULES = [
     cve_2022_22963,
     cve_2022_22947,
-    cve_2022_22965,
-    cve_2018_1273
+    cve_2022_22965
 ]
 
 
