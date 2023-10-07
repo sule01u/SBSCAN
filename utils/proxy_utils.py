@@ -18,4 +18,4 @@ def get_with_proxy(url, proxy):
         "https": format_url(proxy, "https")
     }
     print(proxies)
-    return requests.get(url, proxies=proxies, headers=DEFAULT_HEADER, verify=False, timeout=TIMEOUT)
+    return requests.get(url, proxies=proxies, headers=DEFAULT_HEADER, verify=False, timeout=TIMEOUT, stream=True)

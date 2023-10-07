@@ -20,8 +20,7 @@ def fetch_target_content(target, proxies):
         if proxies:
             response = get_with_proxy(target, proxies)
         else:
-            response = requests.get(target, headers=headers, timeout=16, verify=False)
-
+            response = requests.get(target, headers=headers, timeout=16, verify=False, stream=True)
         return response
     except requests.ConnectionError:
         cprint(f"\n[-] URL {target} 连接错误", "magenta")
