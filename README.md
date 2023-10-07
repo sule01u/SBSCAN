@@ -12,7 +12,6 @@ $ python3 sbscan.py --help
 ```
 >  ![sbsscan](https://p.ipic.vip/t752lu.png)
 
-fir 
 
 ## 🎡 Options
 ```Bash

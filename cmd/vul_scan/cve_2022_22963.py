@@ -9,6 +9,7 @@
 import requests
 import random
 from configs.custom_headers import USER_AGENTS
+from utils.format_utils import format_url
 
 
 def check(target_url, proxies=None):
@@ -31,7 +32,7 @@ def check(target_url, proxies=None):
     }
 
     # 创建请求URL
-    request_url = target_url.rstrip("/") + "/functionRouter"
+    request_url = format_url(target_url, "http").rstrip("/") + "/functionRouter"
 
     try:
         if proxies:

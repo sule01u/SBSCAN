@@ -25,13 +25,16 @@ def single_scan(url, proxy):
         url = format_url(url, "http")
         target = url + path.strip()
         response = fetch_target_content(target, proxy)
-        if response and response.status_code == 200:
-            cprint(f"[+] 状态码{response.status_code} 信息泄露URL为:{target} 页面长度为:{len(response.content)}", "red",
-                   attrs=["bold", "reverse"])
-            vulnerable_paths.append(target)
-        else:
-            #pass
-            cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
+        try:
+            if response and response.status_code == 200:
+                cprint(f"[+] 状态码{response.status_code} 信息泄露URL为:{target} 页面长度为:{len(response.content)}", "red",
+                       attrs=["bold", "reverse"])
+                vulnerable_paths.append(target)
+            else:
+                # pass
+                cprint(f"[-] 状态码{response.status_code} 无法访问 URL为:{target}", "yellow")
+        except Exception as e:
+            cprint(f"[-] {e} 无法访问 URL为:{target}", "yellow")
 
     return vulnerable_paths
 
