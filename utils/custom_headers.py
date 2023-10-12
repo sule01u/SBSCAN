@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-   File Name：     ua.py
+   File Name：     custom_headers.py
    Description :
    Author :       sule01u
    date：          2023/10/4
@@ -39,7 +39,8 @@ USER_AGENTS = [
 DEFAULT_HEADER = {
     "User-Agent": random.choice(USER_AGENTS),
     "Accept-Language": "zh,zh-TW;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6",
-    "Cookie": "rememberMe=int"
+    "Cookie": "rememberMe=int",
+    "Accept": "text/html"
 
 }
 

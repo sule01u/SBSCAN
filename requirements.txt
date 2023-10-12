@@ -5,3 +5,8 @@ idna==2.10
 requests==2.31.0
 termcolor==2.3.0
 urllib3==1.26.4
+markdown-it-py==3.0.0
+mdurl==0.1.2
+Pygments==2.16.1
+rich==13.6.0
+tqdm==4.66.1

@@ -5,33 +5,39 @@
 
 ## 🏂 Run
 ```Bash
+# 安装使用
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
-$ pip3 install -r requirements.txt
+$ pip3 install -r requirements.txt   # 以免跟其他包版本冲突，可以创建虚拟环境后安装项目依赖
 $ python3 sbscan.py --help
 ```
 > 使用效果图
 
->  ![image-20231007165304739](https://p.ipic.vip/fy2zas.png)
+>  ![image-20231012194831605](https://p.ipic.vip/1j9o3a.png)
 
 
 ## 🎡 Options
 ```Bash
-      -u, --url TEXT     对单个URL进行扫描
-      -f, --file TEXT    读取文件中的url目标进行扫描
-      -p, --proxy TEXT   指定HTTP代理
-      --threads INTEGER  指定线程数量
-      --quiet            启用纯净输出，只输出命中的敏感路径信息
-      --help             显示帮助信息
+      -u, --url               				对单个URL进行扫描
+      -f, --file              				读取文件中的url目标进行扫描
+      -p, --proxy             				指定HTTP代理
+      -t, --threads           				指定线程数量
+      -q, --quiet             				启用纯净输出，只输出命中的敏感路径信息
+      -ff, --fingerprint_filter       启用指纹检测，只扫描命中指纹的站点
+      --help                  				显示帮助信息
 
 ```
 
 ## 🎨 Examples
 ```Bash
+# 指定目标站点url进行扫描
 $ python3 sbscan.py -u http://test.com
-$ python3 sbscan.py -f url.txt
-$ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 --threads 10
-$ python3 sbscan.py -u http://test.com --quiet
+# 指定url文件路径扫描，启用指纹检测，未检测到指纹的无需进行路径以及CVE扫描
+$ python3 sbscan.py -f url.txt --ff
+# 指定目标站点url、代理、线程数量
+$ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 -t 10
+# 指定目标站点url、启用纯净输出，只输出命中敏感路径或cve的目标、启用指纹检测，只有命中指纹的才继续扫描
+$ python3 sbscan.py -u http://test.com --quiet -ff
 ```
 
 ## ⛪ Discussion

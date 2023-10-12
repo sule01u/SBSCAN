@@ -1,0 +1,26 @@
+{
+  "cve_2022_22947": {
+    "is_poc": "true",
+    "desc": "使用Spring Cloud Gateway的应用程序在Actuator端点在启用、公开和不安全的情况下容易受到代码注入的攻击, 攻击者可以恶意创建允许在远程主机上执行任意远程执行的请求。"
+  },
+  "cve_2022_22963": {
+    "is_poc": "true",
+    "desc": "Spring Cloud Function SpEL 远程代码执行漏洞。"
+  },
+  "cve_2022_22965": {
+    "is_poc": "true",
+    "desc": "Spring框架存在远程代码执行漏洞，未经授权的远程攻击者可构造HTTP请求在目标系统上写入恶意程序从而执行任意代码。"
+  },
+  "cve_2020_5410": {
+    "is_poc": "true",
+    "desc": "Spring Cloud Config 目录穿越漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"
+  },
+  "cve_2019_3799": {
+    "is_poc": "true",
+    "desc": "Spring Cloud Config目录遍历漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"
+  },
+  "cve_2018_1273": {
+    "is_poc": "false",
+    "desc": "Spring Data Commons爆出远程代码执行漏洞，攻击者可构造包含有恶意代码的SPEL表达式实现远程代码攻击，直接获取服务器控制权限。"
+  }
+}

@@ -1,47 +1,74 @@
 #!/usr/local/bin/python3
 # -*- coding: utf-8 -*-
 """
-   File Name：     reporter.py
+   File Name：     repoter.py
    Description :
-   Author :       suleo
-   date：          2023/10/4
+   Author :       sule01u
+   date：          2023/10/8
 """
-import datetime
+from datetime import datetime
 import os
-from termcolor import cprint
+import json
+from rich import box
+from rich.console import Console
+from rich.table import Table
+from utils.logging_config import configure_logger
+
+logger = configure_logger(__name__)
 
 
-def gene_path(mode):
-    # 获取当前日期
-    current_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    filename = f"{mode}-Reports-{current_date}.txt"
+class ReportGenerator:
+    def __init__(self, output_folder='reports', quiet=False):
+        self.quiet = quiet
+        self.report_data = []
+        self.output_folder = output_folder
+        self.console = Console()
+        if not os.path.exists(self.output_folder):
+            os.makedirs(self.output_folder)
 
-    # 确保输出目录存在
-    if not os.path.exists('output'):
-        os.makedirs('output')
+    def generate(self, url, is_spring, detected_paths, found_cves):
+        """
+        检测报告生成
+        """
+        report_entry = {
+            'url': url,
+            'is_spring': is_spring,
+            'detected_paths': detected_paths,
+            'found_cves': found_cves
+        }
+        if (self.quiet and (detected_paths or found_cves)) or not self.quiet:
+            self._display_report(url, is_spring, detected_paths, found_cves)
+            self.report_data.append(report_entry)
 
-    # 完整路径
-    filepath = os.path.join('output', filename)
-    return filepath
+    def _display_report(self, url, is_spring, paths, cves):
+        """
+        输出检测报告到控制台
+        """
+        table = Table(show_header=True, header_style="bold magenta", box=box.ROUNDED)
+        table.add_column("URL", style="cyan")
+        table.add_column("IS_SPRING", style="cyan")
+        table.add_column("Detected Paths", style="green")
+        table.add_column("Detected CVEs", style="red")
 
+        cve_str = "\n".join([cve['CVE_ID'] + ": " + cve['Details'] for cve in cves]) if cves else "None"
+        path_str = "\n".join(paths) if paths else "None"
 
-def save_leak_report(url, results):
-    """
-    保存给定URL的扫描结果到指定的输出文件中。
-    """
-    filepath = gene_path("leak")
-    with open(filepath, 'a', encoding="utf-8") as f:
-        f.write(f"\n\n{url}扫描结果:\n")
-        for path in results:
-            f.write(f"    {path}\n")
+        table.add_row(url, str(is_spring), path_str, cve_str)
+        self.console.print(table)
 
+    def save_report_to_file(self):
+        """
+        保存检测报告到文件
+        """
+        if not self.report_data:
+            logger.warning("没有生成任何报告内容。")
+            return 
 
-def save_cve_report(cve_id, url, details):
-    """
-    将CVE的详细报告保存到文件中。
-    """
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M')
+        filename = os.path.join(self.output_folder, f'report_{timestamp}.json')
+        with open(filename, 'w') as file:
+            json.dump(self.report_data, file, indent=4)
+        self.console.print(f"报告已保存到 [bold cyan]{filename}[/bold cyan]")
 
-    filepath = gene_path("cve")
-    with open(filepath, 'a') as f:
-        # 使用冒号分隔CVE ID, URL, 和详情，并写入一行
-        f.write(f"{cve_id}:{url}:{details}\n")
+    def get_report_data(self):
+        return self.report_data
