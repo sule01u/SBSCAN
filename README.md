@@ -23,7 +23,7 @@ $ python3 sbscan.py --help
       -p, --proxy             				指定HTTP代理
       -t, --threads           				指定线程数量
       -q, --quiet             				启用纯净输出，只输出命中的敏感路径信息
-      -ff, --fingerprint_filter       启用指纹检测，只扫描命中指纹的站点
+      -ff, --fingerprint_filter                       启用指纹检测，只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
       --help                  				显示帮助信息
 
 ```
