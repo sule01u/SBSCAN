@@ -13,7 +13,7 @@ $ python3 sbscan.py --help
 ```
 > 使用效果图
 
->  ![](https://p.ipic.vip/1j9o3a.png)
+![](https://p.ipic.vip/1j9o3a.png)
 
 
 ## 🎡 Options
