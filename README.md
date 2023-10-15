@@ -1,5 +1,5 @@
 # ✈️ 一、工具概述
-## SBSCAN：
+## SBSCAN：（如果觉得还不错，想要一个🌟）
 - 用于检测站点是否存在Spring Boot的敏感信息泄漏
 - 用于检测站点是否存在Spring相关的漏洞
 
@@ -43,6 +43,7 @@ $ python3 sbscan.py -u http://test.com --quiet -ff
 ## ⛪ Discussion
 * Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
 * WeChat: 扫码关注不懂安全
+* 欢迎PR
 <p>
     <img alt="QR-code" src="https://github.com/sule01u/BigTree975.github.io/blob/master/img/mine.png" width="20%" height="20%" style="max-width:100%;">
 </p>
