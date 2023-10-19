@@ -11,6 +11,10 @@
     "is_poc": "true",
     "desc": "Spring框架存在远程代码执行漏洞，未经授权的远程攻击者可构造HTTP请求在目标系统上写入恶意程序从而执行任意代码。"
   },
+  "cve_2021_21234": {
+    "is_poc": "true",
+    "desc": "Spring Boot Actuator Logview 0.2.13版本之前，对文件路径参数过滤不严导致可以目录遍历读取任何文件。"
+  },
   "cve_2020_5410": {
     "is_poc": "true",
     "desc": "Spring Cloud Config 目录穿越漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"

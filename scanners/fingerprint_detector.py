@@ -41,7 +41,8 @@ class FingerprintDetector:
     @staticmethod
     def _is_spring_by_favicon(response):
         try:
-            if "image" in response.headers.get("Content-Type", ""):
+            content_type = response.headers.get("Content-Type", "")
+            if "image" in content_type or "octet-stream" in content_type:
                 favicon_hash = hashlib.md5(response.content).hexdigest()
                 if favicon_hash == FingerprintDetector.SPRING_FAVICON_HASH:
                     return True
@@ -51,7 +52,7 @@ class FingerprintDetector:
 
     @staticmethod
     def _is_spring_by_content(response, url):
-        if 'Whitelabel Error Page' in response.text or 'example domain' in response.text.lower():
+        if 'Whitelabel Error Page' in response.text:
             logger.info(f"{url} is a Spring application.")
             return True
         return False
