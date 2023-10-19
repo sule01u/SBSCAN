@@ -18,7 +18,7 @@ class ConfigLoader:
         从给定的文件路径加载配置
         """
         try:
-            with open(file_path, 'r') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 logger.info(f"{file_path} loading succcess!")
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError) as e:
