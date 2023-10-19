@@ -13,22 +13,22 @@ logger = configure_logger(__name__)
 
 
 class PathDetector:
-    MAX_FAILED_COUNT = 20
+    MAX_FAILED_COUNT = 50
     CHUNK_SIZE = 1024
     SSE_MAX_SIZE = 2048
 
     def __init__(self, paths, proxy_manager):
         self.paths = paths
         self.proxy = proxy_manager.get_proxy()
-        self.path_failed_count = 0
 
     def detect(self, url):
         """
         敏感路径检测
         """
+        path_failed_count = 0
         detected_paths = []
-        for path, signature in tqdm(self.paths.items(), desc=f"Start Path Scanning for {url}", ncols=100, nrows=100, leave=False):
-            if self.path_failed_count > self.MAX_FAILED_COUNT:
+        for path, signature in tqdm(self.paths.items(), desc=f"Start Path Scanning for {url}", ncols=100, leave=False):
+            if path_failed_count > self.MAX_FAILED_COUNT:
                 break
             full_url = url + path
             response = self._make_request(full_url)
@@ -36,7 +36,7 @@ class PathDetector:
                 if signature.lower() in response.lower():
                     detected_paths.append(full_url)
             else:
-                self.path_failed_count += 1
+                path_failed_count += 1
 
         return detected_paths
 
