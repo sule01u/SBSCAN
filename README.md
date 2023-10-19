@@ -8,7 +8,7 @@
 # 安装使用
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
-$ pip3 install -r requirements.txt   # 以免跟其他包版本冲突，可以创建虚拟环境后安装项目依赖
+$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # 以免跟其他包版本冲突，建议创建虚拟环境后安装项目依赖；-i 指定使用国内清华源安装依赖；
 $ python3 sbscan.py --help
 ```
 > 使用效果图
@@ -18,13 +18,13 @@ $ python3 sbscan.py --help
 
 ## 🎡 Options
 ```Bash
-      -u, --url               				对单个URL进行扫描
-      -f, --file              				读取文件中的url目标进行扫描
-      -p, --proxy             				指定HTTP代理
-      -t, --threads           				指定线程数量
-      -q, --quiet             				启用纯净输出，只输出命中的敏感路径信息
-      -ff, --fingerprint_filter                       启用指纹检测，只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
-      --help                  				显示帮助信息
+-u, --url               			对单个URL进行扫描
+-f, --file              		        读取文件中的url目标进行扫描
+-p, --proxy             			指定HTTP代理
+-t, --threads           			指定线程数量
+-q, --quiet             			启用纯净输出,只输出命中的敏感路径信息
+-ff, --fingerprint_filter                       启用指纹检测,只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
+--help                  			显示帮助信息
 
 ```
 
