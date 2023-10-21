@@ -31,7 +31,7 @@ def check(url, proxies=None):
     for payload in payloads:
         target_url = url + payload
         try:
-            res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False)
+            res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
             if res.status_code == 200:
                 if (r"root" in res.text and r"nobody" in res.text and r"daemon" in res.text) or ("Microsoft Corp" in res.text and "Microsoft TCP/IP for Windows" in res.text):
                     return True, {

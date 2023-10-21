@@ -34,7 +34,7 @@ def check(target_url, proxies=None):
     request_url = target_url.rstrip("/") + "/functionRouter"
 
     try:
-        response = requests.post(request_url, headers=headers, data='test', verify=False, timeout=6, proxies=proxies if proxies else {})
+        response = requests.post(request_url, headers=headers, data='test', verify=False, timeout=6, proxies=proxies)
 
         # 检查响应内容来判断漏洞是否存在
         if response.status_code == 500 and '"error":"Internal Server Error"' in response.text:

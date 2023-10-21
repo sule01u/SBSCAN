@@ -17,7 +17,7 @@ def parse_and_validate_args(url, file, proxy, threads):
     cli参数解析
     """
     if not url and not file:
-        raise ValueError("Please provide either a URL using -u/--url or a file with URLs using -f/--file.")
+        raise ValueError("Usage: python3 sbscan.py --help")
 
     if url and file:
         raise ValueError("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")

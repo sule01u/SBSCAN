@@ -22,7 +22,7 @@ class CVE_Scanner:
         扫描指定的URL以寻找CVE漏洞。
         """
         found_cves = []
-        for cve_key, cve_value in tqdm(self.cve_data.items(), desc=f"Start CVE Scanning for {url}", ncols=100, leave=False):
+        for cve_key, cve_value in self.cve_data.items():
             # 检查is_poc字段是否为"true"
             if cve_value.get("is_poc") != "true":
                 continue
@@ -34,6 +34,7 @@ class CVE_Scanner:
                 is_vulnerable, details = cve_module.check(url, self.proxy)
                 if is_vulnerable:
                     found_cves.append(details)
+                    break
             except ImportError:
                 logger.error(f"No CVE scanning module found for {cve_key}")
             except Exception as e:

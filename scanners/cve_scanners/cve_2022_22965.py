@@ -103,6 +103,7 @@ def check(target_url, proxies=None):
         }
 
 
+
 if __name__ == '__main__':
     is_vul, res = check("http://localhost:8080/", proxies={})
     print(is_vul, res)

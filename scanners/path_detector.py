@@ -27,7 +27,7 @@ class PathDetector:
         """
         path_failed_count = 0
         detected_paths = []
-        for path, signature in tqdm(self.paths.items(), desc=f"Start Path Scanning for {url}", ncols=100, leave=False):
+        for path, signature in self.paths.items():
             if path_failed_count > self.MAX_FAILED_COUNT:
                 break
             full_url = url + path
@@ -42,7 +42,7 @@ class PathDetector:
 
     def _make_request(self, url):
         try:
-            with requests.get(url, verify=False, proxies=self.proxy if self.proxy else {}, timeout=10, stream=True) as response:
+            with requests.get(url, verify=False, proxies=self.proxy, timeout=10, stream=True) as response:
                 if "text/event-stream" not in response.headers.get("Content-Type", ""):
                     if response.status_code == 200:
                         return response.text
@@ -54,12 +54,13 @@ class PathDetector:
                             break
                     return content.decode("utf-8")
         except requests.ConnectionError as e:
-            logger.error(f"URL: {url} 连接错误：{e}")
+            logger.error(f"URL: {url} Connection error: {e}")
         except requests.Timeout as e:
-            logger.error(f"URL: {url} 请求超时：{e}")
+            logger.error(f"URL: {url} Request timeout: {e}")
         except requests.RequestException as e:
-            logger.error(f"URL: {url} 请求出错：{e}")
-
+            logger.error(f"URL: {url} Request error: {e}")
+        except Exception as e:
+            logger.error(f"URL: {url} Error detection: {e}")
         return None
 
     def _is_valid_response(self, response):

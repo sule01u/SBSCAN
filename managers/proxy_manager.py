@@ -38,8 +38,8 @@ class ProxyManager:
             logger.warning("Proxy connection timed out")
         except requests.ConnectionError:
             logger.warning("Error connecting through proxy")
-        except ValueError as e:
-            logger.warning("Proxy detect ValueError: %s", e)
+        except requests.RequestException:
+            logger.warning("Proxy connection error")
         except Exception as e:
             logger.warning("Proxy detect UnknownError: %s", e)
         return False

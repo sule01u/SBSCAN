@@ -6,21 +6,28 @@
    Author :       sule01u
    date：          2023/10/8
 """
-from rich import print
+import random
+from rich.console import Console
+console = Console()
 
 
 def banner():
-    LOGO = r'''
-             _
- _   _ _ __ | | ___ __   _____      ___ __        ___  ___  ___
-| | | | '_ \| |/ / '_ \ / _ \ \ /\ / / '_ \ _____/ __|/ _ \/ __|
-| |_| | | | |   <| | | | (_) \ V  V /| | | |_____\__ \  __/ (__
- \__,_|_| |_|_|\_\_| |_|\___/ \_/\_/ |_| |_|     |___/\___|\___|
+    colors = ["red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
- name: SBSCAN
- author: sule01u
- from: https://github.com/sule01u/SBSCAN
- desc: springboot信息泄漏扫描 & spring漏洞扫描
+    LOGO = [
+        r"             _",
+        r"_   _ _ __ | | ___ __   _____      ___ __        ___  ___  ___",
+        r"| | | | '_ \| |/ / '_ \ / _ \ \ /\ / / '_ \ _____/ __|/ _ \/ __|",
+        r"| |_| | | | |   <| | | | (_) \ V  V /| | | |_____\__ \  __/ (__",
+        r"\__,_|_| |_|_|\_\_| |_|\___/ \_/\_/ |_| |_|     |___/\___|\___|",
+        "",
+        r"name: SBSCAN",
+        r"author: sule01u",
+        r"from: [underline]https://github.com/sule01u/SBSCAN[/underline]",
+        r"desc: springboot信息泄漏扫描 & spring漏洞扫描",
+        ""
+    ]
 
-'''
-    print(LOGO)
+    for line in LOGO:
+        color = random.choice(colors)
+        console.print(line, style=f"{color}")
