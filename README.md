@@ -1,4 +1,7 @@
+[English README](https://github.com/sule01u/SBSCAN/blob/master/README_en.md)
+
 # ✈️ 一、工具概述
+
 ## SBSCAN：（如果觉得还不错，想要一个🌟）
 - 用于检测站点是否存在Spring Boot的敏感信息泄漏
 - 用于检测站点是否存在Spring相关的漏洞
