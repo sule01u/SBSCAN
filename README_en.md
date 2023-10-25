@@ -1,9 +1,20 @@
 # ✈️ 1. Tool Overview
 
-## SBSCAN: (If you think this project is good, then click 🌟)
+## SBSCAN: (If you think this project is good, then click 🌟 🤩)
 
-- Detects if the site has sensitive information leaks related to Spring Boot
-- Scans the site for vulnerabilities related to Spring
+**SBSCAN is a penetration testing tool specifically designed for the Spring framework, capable of scanning specified sites for Spring Boot sensitive information and verifying related Spring vulnerabilities.**
+
+- **Most Comprehensive Dictionary for Sensitive Paths**:
+  - The most exhaustive dictionary for sensitive paths in Spring Boot sites, assisting you in thoroughly detecting potential sensitive information leaks.
+- **Fingerprint Detection Support**:
+  - **Detect Spring Sites**: Features fingerprint recognition; only sites with Spring fingerprints proceed to the next scanning phase, saving resources and time.
+  - **Sensitive Path Page Fingerprint Detection**: Maximized reduction of false positives, achieving the highest accuracy in its class. No more manual checks to differentiate genuine sensitive pages from home pages or other redirecting pages.
+- **Most Comprehensive Spring Vulnerability POCs**:
+  - All detection POCs for Spring-related CVE vulnerabilities are integrated into this tool, making it the most comprehensive in its class.
+- **Addressing Non-reflective Vulnerabilities**:
+  - Unsure about vulnerabilities that don't have a direct echo just by looking at the response code? Supports the `--dnslog` parameter to specify the DNSLog domain. A successful DNSLog record confirms the existence of the vulnerability.
+- **Other Conventional Features**:
+  - Single URL scanning, URL file scanning, proxy specification support, and multithreading support.
 
 ## 🏂 Run
 
@@ -11,6 +22,8 @@
 # Install and use, it is recommended to reinstall the dependency after the updated version, the new version may increase the dependency of the three-party library;
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
+$ python3 -m venv sbscan
+$ source sbscan/bin/activate
 $ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # To avoid conflicts with other package versions, it's suggested to create a virtual environment before installing dependencies. Use '-i' to specify the Tsinghua University mirror for installations.
 $ python3 sbscan.py --help
 ```
