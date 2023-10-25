@@ -25,14 +25,14 @@ $ python3 sbscan.py --help
 
 ## 🎡 Options
 ```Bash
--u, --url               			对单个URL进行扫描
--f, --file              		        读取文件中的url目标进行扫描
--p, --proxy             			指定HTTP代理
--t, --threads           			指定线程数量
--q, --quiet             			启用纯净输出,只输出命中的敏感路径信息
--ff, --fingerprint_filter                       启用指纹检测,只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
--d, --dnslog                  指定DNSLog域名,用于检测到无回显漏洞时可接收被攻击主机的dns请求
---help                  			显示帮助信息
+-u, --url                              对单个URL进行扫描
+-f, --file                             读取文件中的url目标进行扫描
+-p, --proxy                            指定HTTP代理
+-t, --threads                          指定线程数量
+-q, --quiet                            启用纯净输出,只输出命中的敏感路径信息
+-ff, --fingerprint_filter              启用指纹检测,只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
+-d, --dnslog                           指定DNSLog域名,用于检测到无回显漏洞时可接收被攻击主机的dns请求
+--help                                 显示帮助信息
 ```
 
 ## 🎨 Examples
