@@ -45,7 +45,7 @@ def check(url, dns_domain, proxies=None):
             if dns_domain == "dnslog.cn":
                 details += "，建议使用--dnslog参数指定你的dnslog域名后再次扫描"
             else:
-                details += "，请查看你的dnslog确认"
+                details += "，请查看你的dnslog记录确认"
 
             logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
             return True, {
