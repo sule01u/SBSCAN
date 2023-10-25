@@ -24,7 +24,7 @@
     "desc": "Spring Cloud Config目录遍历漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"
   },
   "cve_2018_1273": {
-    "is_poc": "false",
+    "is_poc": "true",
     "desc": "Spring Data Commons爆出远程代码执行漏洞，攻击者可构造包含有恶意代码的SPEL表达式实现远程代码攻击，直接获取服务器控制权限。"
   }
 }
