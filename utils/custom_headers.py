@@ -39,9 +39,7 @@ USER_AGENTS = [
 DEFAULT_HEADER = {
     "User-Agent": random.choice(USER_AGENTS),
     "Accept-Language": "zh,zh-TW;q=0.9,en-US;q=0.8,en;q=0.7,zh-CN;q=0.6",
-    "Cookie": "rememberMe=int",
-    "Accept": "text/html"
-
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
 }
 
 VULN_HEADER = {

@@ -9,7 +9,7 @@
 import hashlib
 import requests
 from urllib.parse import urljoin
-from utils.custom_headers import DEFAULT_HEADER
+from utils.custom_headers import DEFAULT_HEADER, TIMEOUT
 from utils.logging_config import configure_logger
 
 logger = configure_logger(__name__)
@@ -26,16 +26,15 @@ class FingerprintDetector:
         """检测目标站点是否使用Spring框架"""
         for path in self.PATHS:
             full_url = urljoin(url, path)
-            logger.debug(full_url)
             response = self._make_request(full_url)
-            logger.debug(response.text)
             try:
+                logger.debug(response.text, extra={"target": url})
                 if response.text and (self._is_spring_by_favicon(response) or self._is_spring_by_content(response) or self._is_spring_by_header(response)):
-                    logger.info(f"{url} is a Spring application.")
+                    logger.info(f"target is a Spring application.", extra={"target": url})
                     return True
-            except AttributeError as e:
-                logger.error(f"Error while request {full_url}: {e}")
-        logger.info(f"{url} is not a Spring application.")
+            except AttributeError:
+                logger.debug(f"no text attribute in response", extra={"target": url})
+        logger.info(f"target is not a Spring application.", extra={"target": url})
         return False
 
     @staticmethod
@@ -60,15 +59,11 @@ class FingerprintDetector:
     def _make_request(self, url):
         """向指定的URL发起请求并返回响应。"""
         try:
-            response = requests.get(url, headers=DEFAULT_HEADER, proxies=self.proxy, timeout=10, verify=False)
+            response = requests.get(url, headers=DEFAULT_HEADER, proxies=self.proxy, timeout=TIMEOUT, verify=False)
             if response.content:
                 return response
-        except requests.ConnectionError as e:
-            logger.error(f"URL: {url} Connection error: {e}")
-        except requests.Timeout as e:
-            logger.error(f"URL: {url} Request timed out: {e}")
         except requests.RequestException as e:
-            logger.error(f"URL: {url} Request error: {e}")
+            logger.debug(f"Request error: {e}", extra={"target": url})
         except Exception as e:
-            logger.error(f"URL: {url} Error detection: {e}")
+            logger.error(f"An unexpected error occurred during fingerprint detection: {e}", extra={"target": url})
         return None

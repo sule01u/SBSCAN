@@ -17,7 +17,7 @@ class CVE_Scanner:
         self.cve_data = cve_data
         self.proxy = proxy_manager.get_proxy()
 
-    def scan(self, url):
+    def scan(self, url, dns_domain):
         """
         扫描指定的URL以寻找CVE漏洞。
         """
@@ -31,7 +31,7 @@ class CVE_Scanner:
             module_name = f"scanners.cve_scanners.{cve_key}"
             try:
                 cve_module = __import__(module_name, fromlist=["check"])
-                is_vulnerable, details = cve_module.check(url, self.proxy)
+                is_vulnerable, details = cve_module.check(url, dns_domain, self.proxy)
                 if is_vulnerable:
                     found_cves.append(details)
                     break

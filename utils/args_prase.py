@@ -6,6 +6,8 @@
    Author :       sule01u
    date：          2023/10/9
 """
+import sys
+
 import click
 from utils.format_utils import format_url, format_proxy
 from utils.logging_config import configure_logger
@@ -17,7 +19,7 @@ def parse_and_validate_args(url, file, proxy, threads):
     cli参数解析
     """
     if not url and not file:
-        raise ValueError("Usage: python3 sbscan.py --help")
+        raise ValueError("Usage: python3 sbscan.py -h/--help")
 
     if url and file:
         raise ValueError("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
@@ -29,7 +31,7 @@ def parse_and_validate_args(url, file, proxy, threads):
             logger.error("Invalid Proxy provided. Exiting...")
             raise ValueError("Invalid Proxy provided. Exiting...")
     else:
-        logger.info("Unspecified proxy")
+        logger.debug("Unspecified proxy")
         formated_proxy = {}
 
     urls = []
@@ -46,6 +48,9 @@ def parse_and_validate_args(url, file, proxy, threads):
         with open(file, 'r') as f:
             lines = f.readlines()
             for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
                 formatted_url = format_url(line.strip())
                 if not formatted_url:
                     invalid_urls.append(line.strip())
@@ -57,16 +62,16 @@ def parse_and_validate_args(url, file, proxy, threads):
         raise ValueError("No valid URLs provided in file to scan. Exiting...")
 
     if invalid_urls:
-        logger.info("The url file has an unrecognized URL")
+        logger.debug("The url file has an unrecognized URL")
         click.secho("The following URLs are invalid:", fg='yellow')
         for inv_url in invalid_urls:
             click.secho(inv_url, fg='yellow')
 
-    logger.info(f"return args: %s" % {
+    logger.debug(f"return args: %s" % {
         "urls": urls,
         "proxy": formated_proxy,
         "threads": threads
-    })
+    }, extra={"target": urls})
     return {
         "urls": urls,
         "proxy": formated_proxy,

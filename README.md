@@ -8,15 +8,19 @@
 
 ## 🏂 Run
 ```Bash
-# 安装使用
+# 安装使用, 更新版本之后建议重装依赖，新版本可能会增加三方库的依赖；
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # 以免跟其他包版本冲突，建议创建虚拟环境后安装项目依赖；-i 指定使用国内清华源安装依赖；
 $ python3 sbscan.py --help
 ```
-> 使用效果图
+> 检测效果图, 使用彩色表格打印更直观显示检测结果
 
 ![](https://p.ipic.vip/1j9o3a.png)
+
+> **检测前**可使用 `tail -f logs/sbscan.log` 实时查看详细的检测情况 
+
+![image-20231025144656039](https://p.ipic.vip/95mhnq.png)
 
 
 ## 🎡 Options
@@ -27,8 +31,8 @@ $ python3 sbscan.py --help
 -t, --threads           			指定线程数量
 -q, --quiet             			启用纯净输出,只输出命中的敏感路径信息
 -ff, --fingerprint_filter                       启用指纹检测,只扫描命中指纹的站点(可能有漏报，结合实际情况选择是否启用)
+-d, --dnslog                  指定DNSLog域名,用于检测到无回显漏洞时可接收被攻击主机的dns请求
 --help                  			显示帮助信息
-
 ```
 
 ## 🎨 Examples
@@ -41,11 +45,13 @@ $ python3 sbscan.py -f url.txt --ff
 $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 -t 10
 # 指定目标站点url、启用纯净输出，只输出命中敏感路径或cve的目标、启用指纹检测，只有命中指纹的才继续扫描
 $ python3 sbscan.py -u http://test.com --quiet -ff
+# 指定url文件路径、指定dnslog域名、使用10个线程进行并发扫描并启用纯净输出
+$ python3 sbscan.py -f url.txt -t 4 -d 5pugcrp1.eyes.sh --quiet
 ```
 
 ## ⛪ Discussion
 * Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
-* WeChat: 扫码关注不懂安全
+* WeChat: 扫码关注**不懂安全**
 * 欢迎pr
 <p>
     <img alt="QR-code" src="https://github.com/sule01u/BigTree975.github.io/blob/master/img/mine.png" width="20%" height="20%" style="max-width:100%;">

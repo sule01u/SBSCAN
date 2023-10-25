@@ -21,7 +21,7 @@ def format_url(url):
         logger.error(f"Error: '{url}' is not a valid URL format.")
         return None
 
-    return url
+    return url.rstrip("/") + "/"
 
 
 def is_valid_url(url):

@@ -7,7 +7,6 @@
    date：          2023/10/8
 """
 from tqdm import tqdm
-import requests
 from scanners.path_detector import PathDetector
 from scanners.cve_scanner import CVE_Scanner
 from scanners.fingerprint_detector import FingerprintDetector
@@ -19,10 +18,10 @@ logger = configure_logger(__name__)
 
 
 class ScannerManager:
-    def __init__(self, target_urls, proxy_manager, max_threads, fingerprint_filter=False, quiet=False):
-        self.reporter = None
+    def __init__(self, target_urls, proxy_manager, dns_domain, max_threads, fingerprint_filter=False, quiet=False):
         self.target_urls = target_urls
         self.proxy_manager = proxy_manager
+        self.dns_domain = dns_domain
         self.max_threads = max_threads
         self.quiet = quiet
         self.fingerprint_filter = fingerprint_filter
@@ -37,22 +36,21 @@ class ScannerManager:
 
     def start_scanning(self):
         try:
-            pbar = tqdm(total=len(self.target_urls), desc="Start Scanning []: ", ncols=100)
+            pbar = tqdm(total=len(self.target_urls), desc="Start Scanning: ", ncols=100)
             # 此处初始化ReportGenerator
             self.reporter = ReportGenerator(quiet=self.quiet, pbar=pbar)
-
             concurrency_manager = ConcurrencyManager(thread_count=self.max_threads)
             concurrency_manager.execute_tasks(self.scan_url, self.target_urls, pbar)  # 将pbar作为参数传递
             pbar.close()  # 关闭进度条
             return self.reporter.get_report_data()
         except KeyboardInterrupt:
             raise
-        except Exception as e:
+        except Exception:
             pbar.close()
             raise
 
     def scan_url(self, url, pbar=None):
-        logger.info(f"Starting scan for {url}")
+        logger.debug(f"Starting scan target", extra={"target": url})
         detected_paths = []
         found_cves = []
         try:
@@ -62,7 +60,7 @@ class ScannerManager:
                 is_spring = fingerprint_detector.is_spring_app(url)
                 if not is_spring:
                     self.reporter.generate(url, is_spring, detected_paths, found_cves)
-                    logger.info(f"Completed scan for {url} without further scanning due to fingerprint results.")
+                    logger.debug(f"current url completed scan", extra={"target": url})
                     if pbar:  # 更新进度条
                         pbar.update(1)
                     return
@@ -72,23 +70,19 @@ class ScannerManager:
             # 敏感路径检测
             detected_paths = self.path_detector.detect(url)
             if detected_paths:
-                for path in detected_paths:
-                    logger.info(f"Detected path {path} for {url}")
+                logger.info(f"Detected {len(detected_paths)} sensitive paths", extra={"target": url})
             else:
-                logger.info(f"No sensitive paths detected for {url}")
+                logger.info(f"No sensitive paths detected", extra={"target": url})
 
             # CVE扫描
-            found_cves = self.cve_scanner.scan(url)
-            if found_cves:
-                for cve in found_cves:
-                    logger.info(f"Detected {cve['CVE_ID']} for {url}")
-            else:
-                logger.info(f"No CVE vulnerabilities detected for {url}")
+            found_cves = self.cve_scanner.scan(url, self.dns_domain)
+            if not found_cves:
+                logger.info(f"No CVE vulnerabilities detected", extra={"target": url})
 
-            # 报告
+            # 生成报告
             self.reporter.generate(url, is_spring, detected_paths, found_cves)
             if pbar:  # 更新进度条
                 pbar.update(1)
-            logger.info(f"Completed scan for {url}")
+            logger.debug(f"current url completed scan", extra={"target": url})
         except Exception as e:
-            logger.error(f"An error occurred while processing URL {url}: {str(e)}")
+            logger.error(f"An error occurred while processing URL: {str(e)}", extra={"target": url})

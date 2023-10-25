@@ -28,35 +28,39 @@ class CustomCommand(Command):
 @click.option("-p", "--proxy", type=str, help="使用HTTP代理")
 @click.option("-t", "--threads", type=int, help="并发线程数, 默认单线程", default=1)
 @click.option("-ff", "--fingerprint_filter", is_flag=True, help="只对存在spring指纹的网站开始扫描")
+@click.option("-d", "--dnslog", type=str, help="指定dnslog域名", default="")
 @click.option("-q", "--quiet", is_flag=True, help="纯净版输出，仅输出命中的结果")
-@click.option('--help', is_flag=True, callback=lambda ctx, param, value: ctx.exit(click.echo(ctx.get_help()) or 0) if value else None, expose_value=False, help="显示帮助信息")
-def main(url, file, proxy, threads, fingerprint_filter, quiet):
+@click.option("-h", "--help", is_flag=True, callback=lambda ctx, param, value: ctx.exit(click.echo(ctx.get_help()) or 0) if value else None, expose_value=False, help="显示帮助信息")
+def main(url, file, proxy, dnslog, threads, fingerprint_filter, quiet):
     try:
-        # 使用args_parse模块进行参数解析和验证
+        # args_parse
         args_data = parse_and_validate_args(url, file, proxy, threads)
+        logger.debug(args_data)
     except ValueError as e:
         click.secho(str(e), fg='red')
-        sys.exit(1)
+        sys.exit()
 
     try:
         proxy_manager = ProxyManager(args_data["proxy"])
     except Exception as e:
         click.secho(str(e), fg='red')
-        sys.exit(1)
+        sys.exit()
 
     try:
-        manager = ScannerManager(args_data["urls"], proxy_manager, args_data["threads"], fingerprint_filter, quiet)
-        click.secho("扫描时间部分情况下可能稍长，请耐心等待扫描结果:[Please wait for the scan results]", fg='green', bold=True)
+        manager = ScannerManager(args_data["urls"], proxy_manager, dnslog, args_data["threads"], fingerprint_filter, quiet)
+        click.secho("[+] 扫描时间部分情况下可能稍长，请耐心等待扫描结果[Please wait for the scan results]:", fg='green', bold=True)
+        logger.info("Starting scan for target URLs")
         report_data = manager.start_scanning()
+        logger.info("Scan completed for target URLs")
         if quiet and not report_data:
-            click.secho("目标未命中检测规则 [No sensitive paths or CVEs detected for the provided URLs.]", fg="yellow")
+            click.secho("[-] 目标未命中任何检测规则 [No sensitive paths or CVEs detected for the provided URLs]", fg="yellow")
         manager.reporter.save_report_to_file()
     except KeyboardInterrupt:
-        click.secho("已手动中断扫描 [Interrupted scan].", fg='red')
-        sys.exit(1)
+        click.secho("[-] 已手动中断扫描 [Interrupted scan].", fg='red')
+        sys.exit()
     except Exception as e:
-        logger.error(e)
-        sys.exit(1)
+        logger.error(e, extra={'url': "target_url"})
+        sys.exit()
 
 
 if __name__ == "__main__":
