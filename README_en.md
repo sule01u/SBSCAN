@@ -32,9 +32,8 @@ BashCopy code
 -p, --proxy                            Specify an HTTP proxy
 -t, --threads                          Specify the number of threads
 -q, --quiet                            Enable clean output, only display sensitive path hits
--ff, --fingerprint_filter              Activate fingerprint detection, only scan sites that
-match a fingerprint (might have false negatives, use based on your judgment)
---dnslog															 Specify an DNSLog domain
+-ff, --fingerprint_filter              Enable fingerprint detection, only the sites that detect spring fingerprints will be scanned in the next step (it may cause missing reports, please select whether to enable it according to the actual situation
+--dnslog                               Specify an DNSLog domain
 --help                                 Display help information
 ```
 
