@@ -1,8 +1,9 @@
 certifi==2023.7.22
 charset-normalizer==3.3.0
-click==7.0
+click==8.1.6
+openai==0.27.8
 idna==2.10
-requests==2.22.0
+requests==2.31.0
 termcolor==2.3.0
 urllib3==1.26.4
 markdown-it-py==3.0.0
