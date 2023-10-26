@@ -8,7 +8,7 @@
 """
 from tqdm import tqdm
 from scanners.path_detector import PathDetector
-from scanners.cve_scanner import CVE_Scanner
+from scanners.cve_scanner import CVEScanner
 from scanners.fingerprint_detector import FingerprintDetector
 from managers.concurrency_manager import ConcurrencyManager
 from utils.config_loader import ConfigLoader
@@ -32,7 +32,7 @@ class ScannerManager:
 
         # 创建CVE扫描器的实例
         cve_config = ConfigLoader.load_config("config/cve.json") or {}
-        self.cve_scanner = CVE_Scanner(cve_config, self.proxy_manager)
+        self.cve_scanner = CVEScanner(cve_config, self.proxy_manager)
 
     def start_scanning(self):
         try:

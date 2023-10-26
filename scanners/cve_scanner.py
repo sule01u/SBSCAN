@@ -6,16 +6,31 @@
    Author :       sule01u
    date：          2023/10/8
 """
-from tqdm import tqdm
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 
-class CVE_Scanner:
+class CVEScanner:
     def __init__(self, cve_data, proxy_manager):
         # 加载cve.json中的配置
         self.cve_data = cve_data
         self.proxy = proxy_manager.get_proxy()
+
+    @staticmethod
+    def _scan_cve(cve_key, url, dns_domain, proxy):
+        """对单一CVE进行扫描"""
+        module_name = f"scanners.cve_scanners.{cve_key}"
+        try:
+            cve_module = __import__(module_name, fromlist=["check"])
+            is_vulnerable, details = cve_module.check(url, dns_domain, proxy)
+            if is_vulnerable:
+                return details
+        except ImportError:
+            logger.error(f"No CVE scanning module found for {cve_key}")
+        except Exception as e:
+            logger.error(f"Error during scanning for {cve_key}. Error: {e}")
+        return None
 
     def scan(self, url, dns_domain):
         """
@@ -27,17 +42,18 @@ class CVE_Scanner:
             if cve_value.get("is_poc") != "true":
                 continue
 
-            # 使用cve_key检查是否存在相应的CVE扫描模块
-            module_name = f"scanners.cve_scanners.{cve_key}"
-            try:
-                cve_module = __import__(module_name, fromlist=["check"])
-                is_vulnerable, details = cve_module.check(url, dns_domain, self.proxy)
-                if is_vulnerable:
-                    found_cves.append(details)
-                    break
-            except ImportError:
-                logger.error(f"No CVE scanning module found for {cve_key}")
-            except Exception as e:
-                logger.error(f"Error during scanning for {cve_key}. Error: {e}")
+            cve_details = self._scan_cve(cve_key, url, dns_domain, self.proxy)
+            if cve_details:
+                found_cves.append(cve_details)
+                break
 
         return found_cves
+
+
+if __name__ == '__main__':
+    from utils.config_loader import ConfigLoader
+    from managers.proxy_manager import ProxyManager
+    proxy_manager = ProxyManager()
+    cve_config = ConfigLoader.load_config("../config/cve.json") or {}
+    c1 = CVEScanner(cve_config, proxy_manager)
+    print(c1.scan("http://192.168.1.13:8080/", ""))

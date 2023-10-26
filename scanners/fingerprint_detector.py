@@ -67,3 +67,10 @@ class FingerprintDetector:
         except Exception as e:
             logger.error(f"An unexpected error occurred during fingerprint detection: {e}", extra={"target": url})
         return None
+
+
+if __name__ == '__main__':
+    from managers.proxy_manager import ProxyManager
+    proxyManager = ProxyManager()
+    finger_d = FingerprintDetector(proxyManager)
+    print(finger_d.is_spring_app("http://192.168.1.13:8080"))

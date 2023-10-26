@@ -6,7 +6,6 @@
    Author :       sule01u
    date：          2023/10/8
 """
-import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from utils.logging_config import configure_logger
 logger = configure_logger(__name__)

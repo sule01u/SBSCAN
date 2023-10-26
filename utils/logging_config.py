@@ -8,7 +8,7 @@
 """
 import logging
 import os
-from colorama import init, Fore, Back, Style
+from colorama import init, Fore, Back
 
 # 初始化colorama
 init(autoreset=True)

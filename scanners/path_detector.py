@@ -71,3 +71,10 @@ class PathDetector:
         return None
 
 
+if __name__ == '__main__':
+    from managers.proxy_manager import ProxyManager
+    proxy_manager = ProxyManager()
+    paths = {"actuator": "_links", "actuator/beans": "beans"}
+    path_d = PathDetector(paths, proxy_manager)
+    print(path_d.detect("http://192.168.1.13:8080/"))
+    print(path_d.detect("http://192.168.1.13:8083/"))

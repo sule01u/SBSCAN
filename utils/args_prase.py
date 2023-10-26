@@ -6,74 +6,109 @@
    Author :       sule01u
    date：          2023/10/9
 """
-import sys
-
 import click
-from utils.format_utils import format_url, format_proxy
+from typing import List, Dict, Optional, Union
+from utils.format_utils import FormatterUtils
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 
-def parse_and_validate_args(url, file, proxy, threads):
-    """
-    cli参数解析
-    """
-    if not url and not file:
-        raise ValueError("Usage: python3 sbscan.py -h/--help")
+class ArgumentParser:
+    def __init__(self, url: Optional[str], file: Optional[str], proxy: Optional[str], threads: int):
+        self.url = url
+        self.file = file
+        self.proxy = proxy
+        self.threads = threads
+        self.format_util = FormatterUtils()
 
-    if url and file:
-        raise ValueError("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
+    @staticmethod
+    def raise_value_error(message: str) -> None:
+        """抛出值错误并记录日志"""
+        logger.error(message)
+        raise ValueError(message)
 
-    if proxy:
-        # 存在代理配置时，代理格式化失败抛出异常
-        formated_proxy = format_proxy(proxy)
-        if not formated_proxy:
-            logger.error("Invalid Proxy provided. Exiting...")
-            raise ValueError("Invalid Proxy provided. Exiting...")
-    else:
-        logger.debug("Unspecified proxy")
-        formated_proxy = {}
+    def validate_url_file(self) -> None:
+        """验证URL和文件参数是否有效"""
+        if not self.url and not self.file:
+            self.raise_value_error("Usage: python3 sbscan.py -h/--help")
 
-    urls = []
-    invalid_urls = []
+        if self.url and self.file:
+            self.raise_value_error("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
 
-    if url:
-        formatted_url = format_url(url)
-        if not formatted_url:
-            logger.error("Invalid URL provided. Exiting...")
-            raise ValueError("Invalid URL provided. Exiting...")
-        urls.append(formatted_url)
+    def get_formatted_proxy(self) -> Dict[str, str]:
+        """获取格式化后的代理信息"""
+        if not self.proxy:
+            logger.debug("Unspecified proxy")
+            return {}
+        formatted_proxy = self.format_util.format_proxy(self.proxy)
+        if not formatted_proxy:
+            self.raise_value_error("Invalid Proxy provided. Exiting...")
+        return formatted_proxy
 
-    if file:
-        with open(file, 'r') as f:
-            lines = f.readlines()
-            for line in lines:
-                line = line.strip()
-                if not line:
-                    continue
-                formatted_url = format_url(line.strip())
-                if not formatted_url:
-                    invalid_urls.append(line.strip())
-                else:
-                    urls.append(formatted_url)
+    @staticmethod
+    def extract_urls_from_file(file_path: str) -> List[str]:
+        """从文件中提取URLs"""
+        with open(file_path, 'r') as file:
+            return [line.strip() for line in file if line.strip()]
 
-    if not urls:
-        logger.error("No valid URLs provided in file to scan. Exiting...")
-        raise ValueError("No valid URLs provided in file to scan. Exiting...")
+    def validate_and_format_urls(self, raw_urls: List[str]) -> List[str]:
+        """验证并格式化一系列URLs"""
+        valid_urls = []
+        invalid_urls = []
 
-    if invalid_urls:
-        logger.debug("The url file has an unrecognized URL")
-        click.secho("The following URLs are invalid:", fg='yellow')
-        for inv_url in invalid_urls:
-            click.secho(inv_url, fg='yellow')
+        for url in raw_urls:
+            formatted_url = self.format_util.format_url(url)
+            if formatted_url:
+                valid_urls.append(formatted_url)
+            else:
+                invalid_urls.append(url)
 
-    logger.debug(f"return args: %s" % {
-        "urls": urls,
-        "proxy": formated_proxy,
-        "threads": threads
-    }, extra={"target": urls})
-    return {
-        "urls": urls,
-        "proxy": formated_proxy,
-        "threads": threads
-    }
+        if invalid_urls:
+            logger.debug("A url that does not match the expected format was detected.")
+            click.secho("[-] 以下URLs无效[The following URLs are in invalid format]:", fg='yellow')
+            for invalid_url in invalid_urls:
+                click.secho(invalid_url, fg='yellow')
+
+        if not valid_urls:
+            logger.error("No valid URLs provided in file to scan. Exiting...")
+            raise ValueError("No valid URLs provided in file to scan. Exiting...")
+
+        return valid_urls
+
+    def extract_and_validate_urls(self) -> List[str]:
+        """从URL或文件中提取并验证URLs"""
+        raw_urls = []
+
+        if self.url:
+            raw_urls.append(self.url)
+
+        if self.file:
+            raw_urls.extend(self.extract_urls_from_file(self.file))
+
+        return self.validate_and_format_urls(raw_urls)
+
+    def parse_and_validate(self) -> Dict[str, Union[List[str], Dict[str, str], int]]:
+        """解析和验证所有参数"""
+        self.validate_url_file()
+        formatted_proxy = self.get_formatted_proxy()
+        urls = self.extract_and_validate_urls()
+
+        logger.debug(f"return args is: %s", {
+            "urls": urls,
+            "proxy": formatted_proxy,
+            "threads": self.threads
+        }, extra={"target": urls})
+
+        return {
+            "urls": urls,
+            "proxy": formatted_proxy,
+            "threads": self.threads
+        }
+
+
+if __name__ == '__main__':
+    c1 = ArgumentParser("", "../url.txt", None, 1)
+    c2 = ArgumentParser("baidu.com", "", None, 1)
+    print(c1.parse_and_validate())
+    print(c2.parse_and_validate())
