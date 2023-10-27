@@ -58,6 +58,14 @@ $ python3 sbscan.py -u http://test.com --quiet -ff
 $ python3 sbscan.py -f url.txt -t 4 -d 5pugcrp1.eyes.sh --quiet
 ```
 
+## 🧾 已支持检测CVE列表
+- CVE-2018-1273
+- CVE-2019-3799
+- CVE-2020-5410
+- CVE-2022-22947
+- CVE-2022-22963
+- CVE-2022-22965
+
 ## ⛪ Discussion
 * Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
 * WeChat: 扫码关注**不懂安全**
