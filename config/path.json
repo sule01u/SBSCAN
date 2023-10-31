@@ -37,7 +37,6 @@
   "system/druid/index.html": "Druid",
   "druid/websession.html": "Session",
   "dubbo-provider/distv2/index.html": "Dubbo",
-  "--internal--/swgr"
   "mappings": "mappings",
   "refresh": "beans",
   "shutdown": "shutdown",
