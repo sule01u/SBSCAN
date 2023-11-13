@@ -77,6 +77,7 @@ sbscan [option]
 BashCopy code
 -u, --url                              Scan a single URL
 -f, --file                             Scan targets from a file containing URLs
+-m, --mode                             Specify the scanner mode[path/cve/all],default all
 -p, --proxy                            Specify an HTTP proxy
 -t, --threads                          Specify the number of threads
 -q, --quiet                            Enable clean output, only display sensitive path hits
@@ -91,8 +92,10 @@ BashCopy code
 BashCopy code
 # Scan a specific target URL
 $ python3 sbscan.py -u http://test.com
-# Specify URL file path for scanning, enable fingerprint detection, skip scanning paths and CVEs for non-fingerprint detected URLs
+# Scan files, and URLs that do not match the fingerprint will skip the next step of detection
 $ python3 sbscan.py -f url.txt --ff
+# Only perform vulnerability scanning on the target and only output the hit CVEs
+$ python3 sbscan.py -f url.txt -m cve --quiet
 # Specify target URL, proxy, and thread count
 $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 -t 10
 # Specify target URL, enable quiet output, display only hit sensitive paths or CVEs, enable fingerprint detection for scanning matching fingerprint sites

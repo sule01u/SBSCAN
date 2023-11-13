@@ -72,6 +72,7 @@ sbscan [参数]
 ```Bash
 -u, --url                              对单个URL进行扫描
 -f, --file                             读取文件中的url目标进行扫描
+-m, --mode                             指定扫描模式[path/cve/all],默认all
 -p, --proxy                            指定HTTP代理
 -t, --threads                          指定线程数量
 -q, --quiet                            启用纯净输出,只输出命中的敏感路径信息
@@ -86,6 +87,8 @@ sbscan [参数]
 $ python3 sbscan.py -u http://test.com
 # 指定url文件路径扫描，启用指纹检测，未检测到指纹的无需进行路径以及CVE扫描
 $ python3 sbscan.py -f url.txt --ff
+# 仅对目标进行漏洞扫描并且只输出命中的cve
+$ python3 sbscan.py -f url.txt -m cve --quiet
 # 指定目标站点url、代理、线程数量
 $ python3 sbscan.py -u http://test.com -p 1.1.1.1:8888 -t 10
 # 指定目标站点url、启用纯净输出，只输出命中敏感路径或cve的目标、启用指纹检测，只有命中指纹的才继续扫描
