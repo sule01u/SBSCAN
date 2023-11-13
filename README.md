@@ -31,7 +31,7 @@ $ python3 sbscan.py --help
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan         # 创建虚拟环境
-$ .\venv\Scripts\activate        # 激活虚拟环境
+$ .\sbscan\Scripts\activate        # 激活虚拟环境
 $ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定使用国内清华源安装依赖；
 $ python3 sbscan.py --help
 ```

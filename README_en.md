@@ -35,7 +35,7 @@ $ python3 sbscan.py --help
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan
-$ .\venv\Scripts\activate
+$ .\sbscan\Scripts\activate
 $ pip3 install -r requirements.txt
 $ python3 sbscan.py --help
 ```
