@@ -13,9 +13,11 @@
 - **无回显漏洞解决：** 无回显漏洞检测光看响应状态码不太靠谱？支持--dnslog参数指定dnslog域名，看到dnslog记录才是真的成功验证漏洞存在
 - **其他一些常规支持**：单个url扫描/ url文件扫描 / 支持指定代理 / 支持多线程 / 扫描报告生成
 
-## 🏂 Run
+## 🏂 安装使用
+
+**MacOS && linux**
+
 ```Bash
-# 安装使用, 更新版本之后建议重装依赖，新版本可能会增加三方库的依赖；
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan         # 创建虚拟环境
@@ -23,6 +25,17 @@ $ source sbscan/bin/activate     # 激活虚拟环境
 $ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定使用国内清华源安装依赖；
 $ python3 sbscan.py --help
 ```
+**Windows**
+
+```bash
+$ git clone https://github.com/sule01u/SBSCAN.git
+$ cd SBSCAN
+$ python3 -m venv sbscan         # 创建虚拟环境
+$ .\venv\Scripts\activate        # 激活虚拟环境
+$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定使用国内清华源安装依赖；
+$ python3 sbscan.py --help
+```
+
 > 检测效果图, 使用彩色表格打印更直观显示检测结果，**检测报告**保存位置将会在扫描结束后控制台显示
 
 ![](https://p.ipic.vip/1j9o3a.png)
@@ -36,14 +49,16 @@ $ python3 sbscan.py --help
 > 自行构建 docker 进行
 
 ```Bash
-docker build -t sbscan .
-alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
+$ git clone https://github.com/sule01u/SBSCAN.git
+$ cd SBSCAN
+$ docker build -t sbscan .
+$ alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
 ```
 
 > 使用现有镜像
 
 ```Bash
-alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
+$ alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
 ```
 
 > 使用

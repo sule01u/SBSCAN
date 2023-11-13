@@ -18,13 +18,25 @@
 
 ## 🏂 Run
 
+**MacOS && Linux**
+
 ```shell
-# Install and use, it is recommended to reinstall the dependency after the updated version, the new version may increase the dependency of the three-party library;
 $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan
 $ source sbscan/bin/activate
-$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # To avoid conflicts with other package versions, it's suggested to create a virtual environment before installing dependencies. Use '-i' to specify the Tsinghua University mirror for installations.
+$ pip3 install -r requirements.txt
+$ python3 sbscan.py --help
+```
+
+**windows**
+
+```bash
+$ git clone https://github.com/sule01u/SBSCAN.git
+$ cd SBSCAN
+$ python3 -m venv sbscan
+$ .\venv\Scripts\activate
+$ pip3 install -r requirements.txt
 $ python3 sbscan.py --help
 ```
 
@@ -41,14 +53,16 @@ $ python3 sbscan.py --help
 > Build your own Docker image
 
 ```Bash
-docker build -t sbscan .
-alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
+$ git clone https://github.com/sule01u/SBSCAN.git
+$ cd SBSCAN
+$ docker build -t sbscan .
+$ alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
 ```
 
 > Pull an existing image in the docker hub
 
 ```bash
-alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
+$ alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
 ```
 
 > How to use
