@@ -42,11 +42,19 @@ $ python3 sbscan.py --help
 
 ```Bash
 docker build -t sbscan .
-alias sbscan='docker run --rm -it sbscan'
+alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
 ```
 
-```Bash
-alias sbscan='docker run --rm -it qyvlik/sbscan'
+> Pull an existing image in the docker hub
+
+```bash
+alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
+```
+
+> How to use
+
+```
+sbscan [option]
 ```
 
 ## 🎡 Options

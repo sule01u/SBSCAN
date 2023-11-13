@@ -28,5 +28,5 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/sbscan:v0.5
+            ${{ secrets.DOCKERHUB_USERNAME }}/sbscan:${{ steps.get_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/sbscan:latest

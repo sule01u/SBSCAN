@@ -37,16 +37,23 @@ $ python3 sbscan.py --help
 
 ```Bash
 docker build -t sbscan .
-alias sbscan='docker run --rm -it sbscan'
+alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN sbscan'
 ```
 
 > 使用现有镜像
 
 ```Bash
-alias sbscan='docker run --rm -it qyvlik/sbscan'
+alias sbscan='docker run --rm -it -v "$(pwd)":/SBSCAN milusuleo/sbscan'
+```
+
+> 使用
+
+```bash
+sbscan [参数]
 ```
 
 ## 🎡 Options
+
 ```Bash
 -u, --url                              对单个URL进行扫描
 -f, --file                             读取文件中的url目标进行扫描
