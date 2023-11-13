@@ -31,6 +31,20 @@ $ python3 sbscan.py --help
 
 ![image-20231025144656039](https://p.ipic.vip/95mhnq.png)
 
+## 🐳 Docker
+
+> 自行构建 docker 进行
+
+```Bash
+docker build -t sbscan .
+alias sbscan='docker run --rm -it sbscan'
+```
+
+> 使用现有镜像
+
+```Bash
+alias sbscan='docker run --rm -it qyvlik/sbscan'
+```
 
 ## 🎡 Options
 ```Bash

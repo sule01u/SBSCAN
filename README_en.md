@@ -36,6 +36,19 @@ $ python3 sbscan.py --help
 
 ![image-20231025144650471](https://p.ipic.vip/uf51sp.png)
 
+## 🐳 Docker
+
+> Build your own Docker image
+
+```Bash
+docker build -t sbscan .
+alias sbscan='docker run --rm -it sbscan'
+```
+
+```Bash
+alias sbscan='docker run --rm -it qyvlik/sbscan'
+```
+
 ## 🎡 Options
 
 ```bash
