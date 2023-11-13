@@ -24,7 +24,8 @@ def banner():
         r"name: SBSCAN",
         r"author: sule01u",
         r"from: [underline]https://github.com/sule01u/SBSCAN[/underline]",
-        r"desc: springboot信息泄漏扫描 & spring漏洞扫描",
+        r"desc: springboot information leak scanning & spring vulnerability scanning",
+        r"" 
         ""
     ]
 
