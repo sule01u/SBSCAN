@@ -8,6 +8,7 @@
 """
 from urllib.parse import urlparse
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 
@@ -18,7 +19,7 @@ class FormatterUtils:
         """
         if "." not in url:
             return ""
-        url = url if url.startswith(('http://', 'https://')) else 'http://' + url
+        url = url if url.startswith(('http://', 'https://')) else f'http://{url}'
         if not self.is_valid_url(url.strip()):
             logger.error(f"Error: '{url}' is not a valid URL format.")
             return ""
@@ -49,8 +50,8 @@ class FormatterUtils:
                 "http": f"http://{result.netloc}",
                 "https": f"https://{result.netloc}"
             }
-        except ValueError:
-            raise ValueError
+        except ValueError as e:
+            raise ValueError from e
 
 
 if __name__ == '__main__':

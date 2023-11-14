@@ -34,7 +34,8 @@ class ArgumentParser:
             self.raise_value_error("Usage: python3 sbscan.py -h/--help")
 
         if self.url and self.file:
-            self.raise_value_error("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
+            self.raise_value_error(
+                "Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
 
     def get_formatted_proxy(self) -> Dict[str, str]:
         """获取格式化后的代理信息"""
@@ -58,8 +59,7 @@ class ArgumentParser:
         invalid_urls = []
 
         for url in raw_urls:
-            formatted_url = self.format_util.format_url(url)
-            if formatted_url:
+            if formatted_url := self.format_util.format_url(url):
                 valid_urls.append(formatted_url)
             else:
                 invalid_urls.append(url)
@@ -94,11 +94,11 @@ class ArgumentParser:
         formatted_proxy = self.get_formatted_proxy()
         urls = self.extract_and_validate_urls()
 
-        logger.debug(f"return args is: %s", {
-            "urls": urls,
-            "proxy": formatted_proxy,
-            "threads": self.threads
-        }, extra={"target": urls})
+        logger.debug(
+            "return args is: %s",
+            {"urls": urls, "proxy": formatted_proxy, "threads": self.threads},
+            extra={"target": urls},
+        )
 
         return {
             "urls": urls,

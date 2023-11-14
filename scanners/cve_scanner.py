@@ -42,8 +42,7 @@ class CVEScanner:
             if cve_value.get("is_poc") != "true":
                 continue
 
-            cve_details = self._scan_cve(cve_key, url, dns_domain, self.proxy)
-            if cve_details:
+            if cve_details := self._scan_cve(cve_key, url, dns_domain, self.proxy):
                 found_cves.append(cve_details)
                 break
 
@@ -53,6 +52,7 @@ class CVEScanner:
 if __name__ == '__main__':
     from utils.config_loader import ConfigLoader
     from managers.proxy_manager import ProxyManager
+
     proxy_manager = ProxyManager()
     cve_config = ConfigLoader.load_config("../config/cve.json") or {}
     c1 = CVEScanner(cve_config, proxy_manager)

@@ -54,8 +54,8 @@ def configure_logger(name, level=None, output_mode=None):
     """
     配置日志器并返回一个日志实例
     """
-    log_level = level if level else DEFAULT_LOG_LEVEL
-    log_output_mode = output_mode if output_mode else DEFAULT_OUTPUT_MODE
+    log_level = level or DEFAULT_LOG_LEVEL
+    log_output_mode = output_mode or DEFAULT_OUTPUT_MODE
 
     # Ensure that the logging directory exists
     if not os.path.exists('logs'):

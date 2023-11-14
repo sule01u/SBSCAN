@@ -19,7 +19,8 @@ logger = configure_logger(__name__)
 
 
 class ScannerManager:
-    def __init__(self, target_urls, mode, proxy_manager, dns_domain, max_threads, fingerprint_filter=False, quiet=False):
+    def __init__(self, target_urls, mode, proxy_manager, dns_domain, max_threads, fingerprint_filter=False,
+                 quiet=False):
         self.target_urls = target_urls
         self.mode = mode
         self.proxy_manager = proxy_manager
@@ -70,18 +71,22 @@ class ScannerManager:
 
     def start_scanning(self):
         try:
-            pbar = tqdm(total=len(self.target_urls), desc="Start Scanning: ", ncols=100)
-            self.reporter = ReportGenerator(quiet=self.quiet, pbar=pbar)
-            concurrency_manager = ConcurrencyManager(thread_count=self.max_threads)
-            concurrency_manager.execute_tasks(self.scan_url, self.target_urls, pbar)
-            pbar.close()
-            return self.reporter.get_report_data()
+            return self._extracted_from_start_scanning_3()
         except KeyboardInterrupt:
             raise
         except Exception as e:
             pbar.close()
             logger.error(f"Error during scanning: {e}")
             raise
+
+    # TODO Rename this here and in `start_scanning`
+    def _extracted_from_start_scanning_3(self):
+        pbar = tqdm(total=len(self.target_urls), desc="Start Scanning: ", ncols=100)
+        self.reporter = ReportGenerator(quiet=self.quiet, pbar=pbar)
+        concurrency_manager = ConcurrencyManager(thread_count=self.max_threads)
+        concurrency_manager.execute_tasks(self.scan_url, self.target_urls, pbar)
+        pbar.close()
+        return self.reporter.get_report_data()
 
     def scan_url(self, url, pbar=None):
         logger.debug("Starting scan target", extra={"target": url})

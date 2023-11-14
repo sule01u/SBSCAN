@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from utils.custom_headers import TIMEOUT, DEFAULT_HEADER
 from colorama import Fore
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 
@@ -34,10 +35,14 @@ class PathDetector:
         detected_paths = []
         for path, signature in self.paths.items():
             if path_failed_count > self.MAX_FAILED_COUNT:
-                logger.info(f"failed_count: {path_failed_count} - stop detecting paths! Exceeds the maximum number of failed request", extra={"target": url})
+                logger.info(
+                    f"failed_count: {path_failed_count} - stop detecting paths! Exceeds the maximum number of failed request",
+                    extra={"target": url})
                 break
             elif path_success_count > self.MAX_SUCCESS_COUNT:
-                logger.info(f"success_count: {path_success_count} - stop detecting paths! Exceeds the maximum number of successful request", extra={"target": url})
+                logger.info(
+                    f"success_count: {path_success_count} - stop detecting paths! Exceeds the maximum number of successful request",
+                    extra={"target": url})
                 detected_paths = []
                 break
             full_url = urljoin(url, path)
@@ -48,13 +53,21 @@ class PathDetector:
             if signature.lower() in response.lower():
                 path_success_count += 1
                 detected_paths.append(full_url)
-                logger.info(Fore.CYAN + f"<-- " + Fore.RED + f"[success detected path!]", extra={"target": full_url})
+                logger.info(
+                    f"{Fore.CYAN}<-- {Fore.RED}[success detected path!]",
+                    extra={"target": full_url},
+                )
         return detected_paths
 
     def _make_request(self, url):
         try:
-            with requests.get(url, headers=DEFAULT_HEADER, verify=False, proxies=self.proxy, timeout=TIMEOUT, stream=True, allow_redirects=False) as res:
-                logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"  [Content-Length: {res.headers.get('Content-Length', 0)}]", extra={"target": url})
+            with requests.get(url, headers=DEFAULT_HEADER, verify=False, proxies=self.proxy, timeout=TIMEOUT,
+                              stream=True, allow_redirects=False) as res:
+                logger.debug(
+                    f"{Fore.CYAN}[{res.status_code}]{Fore.BLUE}"
+                    + f"  [Content-Length: {res.headers.get('Content-Length', 0)}]",
+                    extra={"target": url},
+                )
                 if "text/event-stream" in res.headers.get("Content-Type", ""):
                     content = b""
                     for chunk in res.iter_content(self.CHUNK_SIZE):
@@ -73,6 +86,7 @@ class PathDetector:
 
 if __name__ == '__main__':
     from managers.proxy_manager import ProxyManager
+
     proxy_manager = ProxyManager()
     paths = {"actuator": "_links", "actuator/beans": "beans"}
     path_d = PathDetector(paths, proxy_manager)

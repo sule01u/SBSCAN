@@ -16,6 +16,7 @@ from rich.table import Table
 from rich.box import ROUNDED
 from io import StringIO
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 
@@ -40,9 +41,9 @@ class ReportGenerator:
         }
         if (self.quiet and (detected_paths or found_cves)) or not self.quiet:
             self._display_report(url, is_spring, detected_paths, found_cves)
-            if detected_paths or found_cves:
-                with self.lock:  # 添加数据到共享列表时上锁
-                    self.report_data.append(report_entry)
+        if detected_paths or found_cves:
+            with self.lock:  # 添加数据到共享列表时上锁
+                self.report_data.append(report_entry)
 
     def _display_report(self, url, is_spring, paths, cves):
         table = Table(show_header=True, header_style="bold magenta", box=ROUNDED)
@@ -80,7 +81,8 @@ class ReportGenerator:
 
         with self.lock:  # 读取共享数据时上锁
             if not self.report_data:
-                logger.warning("没有命中任何检测规则，未生成报告。[No detection rule was matched and no report was generated.]")
+                logger.warning(
+                    "没有命中任何检测规则，未生成报告。[No detection rule was matched and no report was generated.]")
                 return
             report_data_copy = self.report_data.copy()  # 为了安全地在锁外部使用
 
@@ -92,4 +94,3 @@ class ReportGenerator:
     def get_report_data(self):
         with self.lock:  # 读取共享数据时上锁
             return self.report_data.copy()
-

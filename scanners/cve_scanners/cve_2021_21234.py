@@ -11,9 +11,9 @@ from urllib.parse import urljoin
 from utils.custom_headers import DEFAULT_HEADER, TIMEOUT
 from colorama import Fore
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
-
 
 CVE_ID = "CVE-2021-21234"
 
@@ -48,14 +48,21 @@ def check(url, dns_domain, proxies=None):
         target_url = urljoin(url, payload["path"])
         try:
             res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
-            logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"[{res.headers}]", extra={"target": target_url})
+            logger.debug(
+                f"{Fore.CYAN}[{res.status_code}]{Fore.BLUE}"
+                + f"[{res.headers}]",
+                extra={"target": target_url},
+            )
             if res.status_code == 200 and is_vulnerable(res.text, payload["conditions"]):
-                logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
+                logger.info(
+                    f"{Fore.RED}[{CVE_ID} vulnerability detected!]",
+                    extra={"target": target_url},
+                )
                 return True, {
                     "CVE_ID": CVE_ID,
                     "URL": target_url,
                     "Details": f"检测到{CVE_ID}的RCE漏洞",
-                    "response": res.text[:200] + "...."
+                    "response": f"{res.text[:200]}....",
                 }
         except requests.RequestException as e:
             logger.debug(f"[Request Error：{e}]", extra={"target": target_url})

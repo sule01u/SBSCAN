@@ -8,6 +8,7 @@
 """
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 
 

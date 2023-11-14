@@ -12,6 +12,7 @@ from urllib.parse import urljoin
 from utils.custom_headers import TIMEOUT, USER_AGENTS
 from colorama import Fore
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
 
@@ -46,7 +47,10 @@ def check(url, dns_domain, proxies=None):
     }
     try:
         res = requests.post(target_url, headers=headers, timeout=TIMEOUT, data=payload, verify=False, proxies=proxies)
-        logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"[{res.headers}]", extra={"target": target_url})
+        logger.debug(
+            f"{Fore.CYAN}[{res.status_code}]{Fore.BLUE}" + f"[{res.headers}]",
+            extra={"target": target_url},
+        )
         if res.status_code == 500:
             details = f"可能存在{CVE_ID}[无回显漏洞]的RCE漏洞"
             if dns_domain == "dnslog.cn":
@@ -54,7 +58,10 @@ def check(url, dns_domain, proxies=None):
             else:
                 details += "，请查看你的dnslog记录确认"
 
-            logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
+            logger.info(
+                f"{Fore.RED}[{CVE_ID} vulnerability detected!]",
+                extra={"target": target_url},
+            )
             return True, {
                 "CVE_ID": CVE_ID,
                 "URL": target_url,

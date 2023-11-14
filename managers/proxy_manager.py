@@ -46,4 +46,3 @@ class ProxyManager:
 
     def get_proxy(self):
         return self.proxy
-

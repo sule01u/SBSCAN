@@ -8,6 +8,7 @@
 """
 import random
 from rich.console import Console
+
 console = Console()
 
 
@@ -25,7 +26,7 @@ def banner():
         r"author: sule01u",
         r"from: [underline]https://github.com/sule01u/SBSCAN[/underline]",
         r"desc: springboot information leak scanning & spring vulnerability scanning",
-        r"" 
+        r""
         ""
     ]
 

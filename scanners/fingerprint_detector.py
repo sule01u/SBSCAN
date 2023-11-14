@@ -29,12 +29,13 @@ class FingerprintDetector:
             response = self._make_request(full_url)
             try:
                 logger.debug(response.text, extra={"target": url})
-                if response.text and (self._is_spring_by_favicon(response) or self._is_spring_by_content(response) or self._is_spring_by_header(response)):
-                    logger.info(f"target is a Spring application.", extra={"target": url})
+                if response.text and (self._is_spring_by_favicon(response) or self._is_spring_by_content(
+                        response) or self._is_spring_by_header(response)):
+                    logger.info("target is a Spring application.", extra={"target": url})
                     return True
             except AttributeError:
-                logger.debug(f"no text attribute in response", extra={"target": url})
-        logger.info(f"target is not a Spring application.", extra={"target": url})
+                logger.debug("no text attribute in response", extra={"target": url})
+        logger.info("target is not a Spring application.", extra={"target": url})
         return False
 
     @staticmethod
@@ -71,6 +72,7 @@ class FingerprintDetector:
 
 if __name__ == '__main__':
     from managers.proxy_manager import ProxyManager
+
     proxyManager = ProxyManager()
     finger_d = FingerprintDetector(proxyManager)
     print(finger_d.is_spring_app("http://192.168.1.13:8080"))

