@@ -3,15 +3,15 @@
 # ✈️ 一、工具概述
 
 ## SBSCAN：（spring框架渗透，这一个工具就够了，如果工具对你有用，请不要吝啬一个star🌟哦）
-**SBSCAN是一款专注于spring框架的渗透测试工具，可以对指定站点进行spring boot敏感信息扫描以及进行spring相关漏洞的扫描与验证。**
+**SBSCAN是一款专注于spring框架的渗透测试工具，可以对指定站点进行springboot敏感信息扫描/未授权扫描以及进行spring相关漏洞的扫描与验证。**
 
-- **最全的敏感路径字典**：最全的spring boot站点敏感路径字典，帮你全面检测站点是否存在敏感信息泄漏
+- **最全的敏感路径字典**：最全的springboot站点敏感路径字典，帮你全面检测站点是否存在敏感信息泄漏
 - **支持指纹检测**：
-  - 检测是否为spring站点：支持指纹识别，只有存在spring指纹的站点才进行下一步扫描，节约资源与时间
-  - 敏感路径页面指纹检测：最大程度解决误报情况，达到同类型工具检出准确率最高，不用再人工确认是否为真的敏感页面而不是首页或者其他跳转的页面
+  - 检测是否为spring站点：支持启用指纹识别，只有存在spring指纹的站点才进行下一步扫描，节约资源与时间
+  - 敏感路径页面指纹检测：对每个页面进行指纹匹配，最大程度解决误报情况，达到同类型工具检出准确率最高，不用再人工确认是否为真的敏感页面而不是首页或者其他跳转的页面
 - **最全的spring漏洞检测POC：** spring相关cve漏洞的检测poc全部给你集成到这款工具里，同类型最全
-- **无回显漏洞解决：** 无回显漏洞检测光看响应状态码不太靠谱？支持--dnslog参数指定dnslog域名，看到dnslog记录才是真的成功验证漏洞存在
-- **其他一些常规支持**：单个url扫描/ url文件扫描 / 支持指定代理 / 支持多线程 / 扫描报告生成
+- **无回显漏洞解决：** 无回显漏洞检测扫描器光看响应状态码不太靠谱？支持--dnslog参数指定dnslog域名，看到dnslog记录才是真的成功验证漏洞存在
+- **其他一些常规支持**：单个url扫描/ url文件扫描 / 扫描模块选择 / 支持指定代理 / 支持多线程 / 扫描报告生成
 
 ## 🏂 安装使用
 
@@ -22,7 +22,7 @@ $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan         # 创建虚拟环境
 $ source sbscan/bin/activate     # 激活虚拟环境
-$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定使用国内清华源安装依赖；
+$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定pip源安装依赖,可选；
 $ python3 sbscan.py --help
 ```
 **Windows**
@@ -32,7 +32,7 @@ $ git clone https://github.com/sule01u/SBSCAN.git
 $ cd SBSCAN
 $ python3 -m venv sbscan         # 创建虚拟环境
 $ .\sbscan\Scripts\activate        # 激活虚拟环境
-$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定使用国内清华源安装依赖；
+$ pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # -i 指定pip源安装依赖,可选；
 $ python3 sbscan.py --help
 ```
 
