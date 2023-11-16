@@ -1,4 +1,5 @@
-[English README](https://github.com/sule01u/SBSCAN/blob/master/README_en.md)
+- [English README](https://github.com/sule01u/SBSCAN/blob/master/README_en.md)
+- [常见问题解答](https://github.com/sule01u/SBSCAN/wiki)
 
 # ✈️ 一、工具概述
 
