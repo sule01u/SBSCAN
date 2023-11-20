@@ -40,7 +40,7 @@ def check(url, dns_domain, proxies=None):
             return True, {
                 "CVE_ID": CVE_ID,
                 "URL": target_url,
-                "Details": f"检测到{CVE_ID}的RCE漏洞",
+                "Details": f"{CVE_ID} vulnerability detected",
                 "response": res.text[:200] + "...."
             }
         logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})

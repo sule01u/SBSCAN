@@ -48,11 +48,11 @@ def check(url, dns_domain, proxies=None):
         res = requests.post(target_url, headers=headers, timeout=TIMEOUT, data=payload, verify=False, proxies=proxies)
         logger.debug(Fore.CYAN + f"[{res.status_code}]" + Fore.BLUE + f"[{res.headers}]", extra={"target": target_url})
         if res.status_code == 500:
-            details = f"可能存在{CVE_ID}[无回显漏洞]的RCE漏洞"
+            details = f"{CVE_ID} vulnerability detected"
             if dns_domain == "dnslog.cn":
-                details += "，建议使用--dnslog参数指定你的dnslog域名后再次扫描"
+                details += ",use the --dnslog parameter to specify your dnslog domain and then scan again"
             else:
-                details += "，请查看你的dnslog记录确认"
+                details += ",please check your dnslog record for confirmation"
 
             logger.info(Fore.RED + f"[{CVE_ID} vulnerability detected!]", extra={"target": target_url})
             return True, {

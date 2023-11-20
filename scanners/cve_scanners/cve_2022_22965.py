@@ -58,7 +58,7 @@ def check(url, dns_domain, proxies=None):
             return True, {
                 "CVE_ID": CVE_ID,
                 "URL": target_url,
-                "Details": f"检测到{CVE_ID}的RCE漏洞"
+                "Details": f"{CVE_ID} vulnerability detected"
             }
         else:
             parsed_url = urlparse(target_url)
@@ -71,7 +71,7 @@ def check(url, dns_domain, proxies=None):
                 return True, {
                     "CVE_ID": CVE_ID,
                     "URL": target_url_root,
-                    "Details": f"检测{CVE_ID}的RCE漏洞"
+                    "Details": f"{CVE_ID} vulnerability detected"
                 }
         logger.info(f"[{CVE_ID} vulnerability not detected]", extra={"target": url})
         return False, {}
