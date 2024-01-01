@@ -41,7 +41,7 @@ $ python3 sbscan.py --help
 
 ![](https://p.ipic.vip/1j9o3a.png)
 
-> **检测前**可使用 `tail -f logs/sbscan.log` 实时查看详细的检测情况 
+> **检测时**可使用 `tail -f logs/sbscan.log` 实时查看详细的检测情况 
 
 ![image-20231025144656039](https://p.ipic.vip/95mhnq.png)
 
