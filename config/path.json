@@ -27,6 +27,8 @@
   "actuator/shutdown": "shutdown",
   "api/swagger-ui.html": "Swagger UI",
   "api/v2/api-docs": "swagger",
+  "docs": "swagger",
+  "v3/api-docs": "swagger",
   "v2/api-docs": "swagger",
   "api-docs": "swagger",
   "api.html": "swagger",
