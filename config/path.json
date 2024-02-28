@@ -134,6 +134,8 @@
   "gateway/actuator/threaddump": "",
   "gateway/actuator/trace": "",
   "health": "",
+  "tmp/heapdump": "",
+  "tmp/heapdump1": "",
   "heapdump.json": "",
   "httptrace": "",
   "hystrix": "",
