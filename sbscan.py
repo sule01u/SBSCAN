@@ -7,9 +7,7 @@
    date：          2023/10/8
 """
 import sys
-import signal
 import locale
-from click import Command, Context
 import click
 from managers.proxy_manager import ProxyManager
 from managers.scanner_manager import ScannerManager
