@@ -104,6 +104,10 @@ $ python3 sbscan.py -u http://test.com --quiet -ff
 $ python3 sbscan.py -f url.txt -t 4 -d 5pugcrp1.eyes.sh --quiet
 ```
 
+## 🧩 Custom extension
+- Added vulnerability detection: scan the scanner/cve_scanners directory and program the detection logic according to other cve formats. Pay attention to the consistent format of function naming, parameter receiving, and return, and then add parameters in the config/cve.json format
+- Added path detection: in config/ Path. json, configure the path and the characteristic string of the path page in dictionary format (none can be left empty).
+
 ## ⛪ Discussion
 
 - For bug reports or feature requests, [click here](https://github.com/sule01u/SBSCAN/issues)
