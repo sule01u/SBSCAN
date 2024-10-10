@@ -2,39 +2,46 @@
 # -*- coding: utf-8 -*-
 """
    File Name：     fingerprint_detector.py
-   Description :
+   Description :   指纹检测模块
    Author :       sule01u
    date：          2023/10/8
 """
 import hashlib
 import requests
 from urllib.parse import urljoin
+import threading
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from utils.custom_headers import DEFAULT_HEADER, TIMEOUT
 from utils.logging_config import configure_logger
+from utils.global_thread_pool import GlobalThreadPool  # 引入全局线程池管理
 
+# 初始化日志记录
 logger = configure_logger(__name__)
 
 
 class FingerprintDetector:
+    """指纹检测类"""
     SPRING_FAVICON_HASH = "0488faca4c19046b94d07c3ee83cf9d6"
     PATHS = ["/favicon.ico", "/"]
 
     def __init__(self, proxy_manager):
         self.proxy = proxy_manager.get_proxy()
+        self.thread_local = threading.local()  # 创建线程本地存储
 
     def is_spring_app(self, url):
         """检测目标站点是否使用Spring框架"""
-        for path in self.PATHS:
-            full_url = urljoin(url, path)
-            response = self._make_request(full_url)
+        # 使用全局线程池并发检测所有预定义路径
+        futures = {GlobalThreadPool.submit_task(self._make_request, urljoin(url, path)): path for path in self.PATHS}
+        for future in futures:
             try:
-                logger.debug(response.text, extra={"target": url})
-                if response.text and (self._is_spring_by_favicon(response) or self._is_spring_by_content(response) or self._is_spring_by_header(response)):
-                    logger.info(f"target is a Spring application.", extra={"target": url})
+                response = future.result()
+                if response and (self._is_spring_by_favicon(response) or self._is_spring_by_content(response) or self._is_spring_by_header(response)):
+                    logger.info(f"Target is a Spring application.", extra={"target": url})
                     return True
-            except AttributeError:
-                logger.debug(f"no text attribute in response", extra={"target": url})
-        logger.info(f"target is not a Spring application.", extra={"target": url})
+            except Exception as e:
+                logger.error(f"Error during Spring fingerprint detection: {e}", extra={"target": url})
+        logger.info(f"Target is not a Spring application.", extra={"target": url})
         return False
 
     @staticmethod
@@ -57,9 +64,10 @@ class FingerprintDetector:
         return "X-Application-Context" in response.headers
 
     def _make_request(self, url):
-        """向指定的URL发起请求并返回响应。"""
+        """向指定的URL发起请求并返回响应"""
+        session = self._get_session()  # 获取线程本地的 Session 对象
         try:
-            response = requests.get(url, headers=DEFAULT_HEADER, proxies=self.proxy, timeout=TIMEOUT, verify=False)
+            response = session.get(url, headers=DEFAULT_HEADER, proxies=self.proxy, timeout=TIMEOUT, verify=False)
             if response.content:
                 return response
         except requests.RequestException as e:
@@ -68,9 +76,40 @@ class FingerprintDetector:
             logger.error(f"An unexpected error occurred during fingerprint detection: {e}", extra={"target": url})
         return None
 
+    def _get_session(self):
+        """获取线程本地的 Session 对象，如果不存在则创建"""
+        if not hasattr(self.thread_local, 'session'):
+            session = requests.Session()
+            session.headers.update(DEFAULT_HEADER)
+            session.verify = False
+            session.proxies = self.proxy
+            session.timeout = TIMEOUT
+
+            # 配置 HTTPAdapter，启用 keep-alive 和连接池
+            adapter = HTTPAdapter(
+                pool_connections=100,
+                pool_maxsize=100,
+                max_retries=Retry(total=3, backoff_factor=0.3)
+            )
+            session.mount('http://', adapter)
+            session.mount('https://', adapter)
+
+            self.thread_local.session = session
+        return self.thread_local.session
+
+    def __del__(self):
+        """析构函数：关闭所有线程本地的 Session 对象"""
+        if hasattr(self, 'thread_local') and hasattr(self.thread_local, 'session'):
+            self.thread_local.session.close()
+
 
 if __name__ == '__main__':
     from managers.proxy_manager import ProxyManager
-    proxyManager = ProxyManager()
-    finger_d = FingerprintDetector(proxyManager)
-    print(finger_d.is_spring_app("http://192.168.1.13:8080"))
+
+    # 初始化全局线程池
+    GlobalThreadPool.initialize(max_workers=50)  # 新增：初始化全局线程池
+
+    # 测试用例
+    proxy_manager = ProxyManager()
+    finger_d = FingerprintDetector(proxy_manager)
+    print(finger_d.is_spring_app("http://localhost:9000/"))

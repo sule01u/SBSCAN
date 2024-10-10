@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
    File Name：     logging_config.py
-   Description :
+   Description :  日志配置
    Author :       sule01u
    date：          2023/10/8
 """

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
    File Name：     args_prase.py
-   Description :
+   Description :   参数解析模块，负责代理解析、URL验证、配置管理
    Author :       sule01u
    date：          2023/10/9
 """
@@ -10,7 +10,10 @@ import click
 from typing import List, Dict, Optional, Union
 from utils.format_utils import FormatterUtils
 from utils.logging_config import configure_logger
+from utils.global_thread_pool import GlobalThreadPool
+import os
 
+# 初始化日志记录
 logger = configure_logger(__name__)
 
 
@@ -22,6 +25,9 @@ class ArgumentParser:
         self.threads = threads
         self.format_util = FormatterUtils()
 
+        # 初始化全局线程池（用于并行处理 URL 和代理验证）
+        GlobalThreadPool.initialize(max_workers=self.threads)
+
     @staticmethod
     def raise_value_error(message: str) -> None:
         """抛出值错误并记录日志"""
@@ -29,50 +35,98 @@ class ArgumentParser:
         raise ValueError(message)
 
     def validate_url_file(self) -> None:
-        """验证URL和文件参数是否有效"""
+        """
+        验证URL和文件参数是否有效。
+        现在支持同时指定 `--url` 和 `--file`，并合并处理。
+        """
         if not self.url and not self.file:
-            self.raise_value_error("Usage: python3 sbscan.py -h/--help")
+            self.raise_value_error("No URL or file provided. Usage: python3 sbscan.py -h/--help")
 
-        if self.url and self.file:
-            self.raise_value_error("Both URL and file arguments cannot be provided simultaneously. Please provide only one.")
-
-    def get_formatted_proxy(self) -> Dict[str, str]:
-        """获取格式化后的代理信息"""
+    def get_formatted_proxy(self) -> List[Dict[str, str]]:
+        """
+        获取格式化后的代理信息，支持多代理配置
+        :return: 代理配置列表（多个代理配置）
+        """
         if not self.proxy:
             logger.debug("Unspecified proxy")
-            return {}
+            return []
+
+        # 如果是文件格式的代理配置，读取文件内容
+        if os.path.isfile(self.proxy):
+            logger.info(f"Loading proxy list from file: {self.proxy}")
+            return self._load_proxies_from_file(self.proxy)
+
+        # 如果是逗号分隔的代理列表，分割为多个代理
+        if "," in self.proxy:
+            logger.info(f"Loading proxy list from comma-separated values: {self.proxy}")
+            proxy_list = self.proxy.split(",")
+            return [self.format_util.format_proxy(proxy.strip()) for proxy in proxy_list if proxy.strip()]
+
+        # 单个代理配置，转换为列表
         formatted_proxy = self.format_util.format_proxy(self.proxy)
-        if not formatted_proxy:
+        if formatted_proxy:
+            return [formatted_proxy]
+        else:
             self.raise_value_error("Invalid Proxy provided. Exiting...")
-        return formatted_proxy
+
+    def _load_proxies_from_file(self, file_path: str) -> List[Dict[str, str]]:
+        """
+        从文件中加载代理配置，并格式化
+        :param file_path: 代理文件路径
+        :return: 格式化后的代理配置列表
+        """
+        proxies = []
+        try:
+            with open(file_path, 'r') as file:
+                for line in file:
+                    proxy = line.strip()
+                    if proxy:
+                        formatted_proxy = self.format_util.format_proxy(proxy)
+                        if formatted_proxy:
+                            proxies.append(formatted_proxy)
+            return proxies
+        except Exception as e:
+            logger.error(f"Failed to read proxy file: {file_path}. Error: {e}")
+            raise ValueError(f"Failed to read proxy file: {file_path}. Error: {e}")
 
     @staticmethod
     def extract_urls_from_file(file_path: str) -> List[str]:
         """从文件中提取URLs"""
-        with open(file_path, 'r') as file:
-            return [line.strip() for line in file if line.strip()]
+        try:
+            with open(file_path, 'r') as file:
+                return [line.strip() for line in file if line.strip()]
+        except Exception as e:
+            logger.error(f"Failed to read URL file: {file_path}. Error: {e}")
+            raise ValueError(f"Failed to read URL file: {file_path}. Error: {e}")
 
     def validate_and_format_urls(self, raw_urls: List[str]) -> List[str]:
         """验证并格式化一系列URLs"""
         valid_urls = []
         invalid_urls = []
 
-        for url in raw_urls:
-            formatted_url = self.format_util.format_url(url)
-            if formatted_url:
-                valid_urls.append(formatted_url)
-            else:
-                invalid_urls.append(url)
+        # 使用全局线程池并行验证 URL
+        futures = {GlobalThreadPool.submit_task(self.format_util.format_url, url): url for url in raw_urls}
+        for future in futures:
+            try:
+                formatted_url = future.result()
+                if formatted_url:
+                    valid_urls.append(formatted_url)
+                else:
+                    invalid_urls.append(futures[future])
+            except Exception as e:
+                logger.error(f"Failed to format URL: {futures[future]}. Error: {e}")
+                invalid_urls.append(futures[future])
 
+        # 记录并打印无效的URL
         if invalid_urls:
-            logger.debug("A url that does not match the expected format was detected.")
+            logger.warning(f"Invalid URLs detected: {invalid_urls}")
             click.secho("[-] 以下URLs无效[The following URLs are in invalid format]:", fg='yellow')
             for invalid_url in invalid_urls:
                 click.secho(invalid_url, fg='yellow')
 
         if not valid_urls:
-            logger.error("No valid URLs provided in file to scan. Exiting...")
-            raise ValueError("No valid URLs provided in file to scan. Exiting...")
+            logger.error("No valid URLs provided to scan. Exiting...")
+            raise ValueError("No valid URLs provided to scan. Exiting...")
 
         return valid_urls
 
@@ -88,17 +142,16 @@ class ArgumentParser:
 
         return self.validate_and_format_urls(raw_urls)
 
-    def parse_and_validate(self) -> Dict[str, Union[List[str], Dict[str, str], int]]:
-        """解析和验证所有参数"""
+    def parse_and_validate(self) -> Dict[str, Union[List[str], List[Dict[str, str]], int]]:
+        """
+        解析和验证所有参数，并返回格式化后的结果
+        :return: 包含 'urls', 'proxy' 和 'threads' 的字典
+        """
         self.validate_url_file()
-        formatted_proxy = self.get_formatted_proxy()
+        formatted_proxy = self.get_formatted_proxy()  # 支持多代理解析
         urls = self.extract_and_validate_urls()
 
-        logger.debug(f"return args is: %s", {
-            "urls": urls,
-            "proxy": formatted_proxy,
-            "threads": self.threads
-        }, extra={"target": urls})
+        logger.info(f"Validated arguments: URLs={len(urls)}, Proxies={len(formatted_proxy)}, Threads={self.threads}")
 
         return {
             "urls": urls,
@@ -108,7 +161,8 @@ class ArgumentParser:
 
 
 if __name__ == '__main__':
-    c1 = ArgumentParser("", "../url.txt", None, 1)
-    c2 = ArgumentParser("baidu.com", "", None, 1)
-    print(c1.parse_and_validate())
-    print(c2.parse_and_validate())
+    # 测试用例
+    c1 = ArgumentParser("", "../url.txt", "http://user:password@host1:port1,http://user:password@host2:port2", 5)
+    c2 = ArgumentParser("https://example.com", "", None, 5)
+    print(c1.parse_and_validate())  # 返回解析后的代理池和 URL 列表
+    print(c2.parse_and_validate())  # 无代理情况下的解析

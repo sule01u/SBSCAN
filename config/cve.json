@@ -9,7 +9,7 @@
   },
   "cve_2022_22965": {
     "is_poc": "true",
-    "desc": "Spring框架存在远程代码执行漏洞，未经授权的远程攻击者可构造HTTP请求在目标系统上写入恶意程序从而执行任意代码。"
+    "desc": "Spring框架 远程代码执行漏洞，未经授权的远程攻击者可构造HTTP请求在目标系统上写入恶意程序从而执行任意代码。"
   },
   "cve_2021_21234": {
     "is_poc": "true",
@@ -21,10 +21,14 @@
   },
   "cve_2019_3799": {
     "is_poc": "true",
-    "desc": "Spring Cloud Config目录遍历漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"
+    "desc": "Spring Cloud Config 目录遍历漏洞，恶意用户或攻击者可以使用特制URL发送请求，可能导致目录遍历攻击。"
   },
   "cve_2018_1273": {
     "is_poc": "true",
-    "desc": "Spring Data Commons爆出远程代码执行漏洞，攻击者可构造包含有恶意代码的SPEL表达式实现远程代码攻击，直接获取服务器控制权限。"
+    "desc": "Spring Data Commons 远程代码执行漏洞，攻击者可构造包含有恶意代码的SPEL表达式实现远程代码攻击，直接获取服务器控制权限。"
+  },
+  "JeeSpringCloud_2023_uploadfile": {
+        "is_poc": "true",
+        "description": "JeeSpringCloud uploadFile.jsp 存在任意文件上传漏洞 2023"
   }
 }
