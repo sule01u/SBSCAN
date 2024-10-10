@@ -100,6 +100,7 @@ class ScannerManager:
             if is_spring is False:
                 if pbar:
                     pbar.update(1)
+                    pbar.refresh()
                 return
 
             # 进行路径检测
@@ -111,7 +112,9 @@ class ScannerManager:
             self.reporter.generate(url, is_spring, detected_paths, found_cves)
             if pbar:
                 pbar.update(1)
+                pbar.refresh()
         except Exception as e:
             logger.error(f"Error processing URL: {e}", extra={"target": url})
             if pbar:
                 pbar.update(1)
+                pbar.refresh()
