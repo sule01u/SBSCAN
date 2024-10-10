@@ -105,6 +105,11 @@ $ python3 sbscan.py -f url.txt -t 4 -d 5pugcrp1.eyes.sh --quiet
 - CVE-2022-22947
 - CVE-2022-22963
 - CVE-2022-22965
+- JeeSpringCloud_2023_uploadfile
+
+## 🧩 自定义扩展
+- 新增漏洞检测：在scanner/cve_scanners 目录下按照其他cve的格式编写检测逻辑，注意函数命名、参数接收、返回格式统一即可，然后在config/cve.json按格式增加配置即可
+- 新增路径检测：在config/path.json 中按照字典格式配置路径 以及 该路径页面的特征字符串(没有可保持空)
 
 ## ⛪ Discussion
 * Bug 反馈或新功能建议[点我](https://github.com/sule01u/SBSCAN/issues)
