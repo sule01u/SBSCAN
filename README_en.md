@@ -4,17 +4,16 @@
 
 **SBSCAN is a penetration testing tool specifically designed for the Spring framework, capable of scanning specified sites for Spring Boot sensitive information and verifying related Spring vulnerabilities.**
 
-- **Most Comprehensive Dictionary for Sensitive Paths**:
-  - The most exhaustive dictionary for sensitive paths in Spring Boot sites, assisting you in thoroughly detecting potential sensitive information leaks.
-- **Fingerprint Detection Support**:
-  - **Detect Spring Sites**: Features fingerprint recognition; only sites with Spring fingerprints proceed to the next scanning phase, saving resources and time.
-  - **Sensitive Path Page Fingerprint Detection**: Maximized reduction of false positives, achieving the highest accuracy in its class. No more manual checks to differentiate genuine sensitive pages from home pages or other redirecting pages.
-- **Most Comprehensive Spring Vulnerability POCs**:
-  - All detection POCs for Spring-related CVE vulnerabilities are integrated into this tool, making it the most comprehensive in its class.
-- **Addressing Non-reflective Vulnerabilities**:
-  - Unsure about vulnerabilities that don't have a direct echo just by looking at the response code? Supports the `--dnslog` parameter to specify the DNSLog domain. A successful DNSLog record confirms the existence of the vulnerability.
-- **Other Conventional Features**:
-  - Single URL scanning, URL file scanning, proxy specification support, and multithreading support.
+- **Comprehensive Sensitive Path Dictionary**: The most comprehensive sensitive path dictionary for Spring Boot sites, helping you thoroughly check whether your site is exposed to sensitive information leakage.
+- **Supports Fingerprint Detection**:
+  - Supports Spring Site Fingerprint Matching: Enable fingerprint identification to continue scanning only if the Spring fingerprint is detected, saving resources and time (sites without this feature may be missed, so use at your discretion).
+  - Supports Sensitive Path Page Keyword Fingerprint Matching: By maintaining keyword features contained in sensitive paths, it performs fingerprint matching on the detected pages, greatly improving the tool’s detection accuracy and reducing the time needed for manual verification of sensitive pages.
+- **Supports Specified Module Detection**: Don’t want to scan for vulnerabilities but only want to check sensitive paths? Or maybe just want to scan for vulnerabilities? You can specify modules using the `-m` parameter.
+- **Most Comprehensive Spring Vulnerability Detection POC**: All CVE vulnerability detection POCs related to Spring are integrated into this tool, making it the most comprehensive of its kind.
+- **Solution for Non-Reflective Vulnerabilities**: Non-reflective vulnerability detection based on response status codes alone isn’t reliable? You can specify a DNSLog domain using the `--dnslog` parameter. The vulnerability is truly verified if DNSLog records are observed.
+- **Noise Reduction Output**: You can specify the `-q` parameter to display only successful detection results.
+- **Friendly Extensibility**: During the initial project design, user custom extension requirements were considered. The project adopts a high-cohesion, low-coupling modular programming approach, allowing you to easily add your own POCs, sensitive paths, and bypass statements, as well as optimize detection logic. For more details, see the "Custom Extensions" section below.
+- **Other Common Supports**: Single URL scanning / URL file scanning / scan module selection / proxy support / multi-threading / scan report generation
 
 ## 🏂 Run
 
